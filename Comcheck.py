@@ -15,19 +15,29 @@ class Message:
         self.name = name
         self.dtype = dtype
         self.data = data
-DATA = [Message('Hi', 'UINT16', 1829)]
+
+    def convert_to_bytes(self):
+        #TODO
+        pass
+
+DATA = [
+    Message('Settings Header', 'UINT16', 0xfffe),
+    Message('uint8', 'UINT8', -69),
+    Message('uint16', 'UINT16', -420),
+    Message('uint32', 'UINT32', -69420),
+    Message('int8', 'UINT8', 69),
+    Message('int16', 'UINT16', 420),
+    Message('int32', 'UINT32', 69420),
+] 
 serverAddressPort   = ('localhost', PORT)
 bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
 # 0xfffe is 0xff and 0xfe
-bytesToSend = [0xff, 0xfe]
-counter = 0
-for types in DATA.keys():
-    for i in range(SIZES[types]):
-        bytesToSend.append(counter)
-        counter += 1
-bytesToSend = bytearray(bytesToSend)
+b = []
+for d in DATA:
+    b.append(d.convert_to_bytes())
+bytesToSend = bytearray(b)
 print("HOST SENDING", bytesToSend)
 
 # Send to server using created UDP socket
