@@ -15,7 +15,8 @@ class Message:
         self.name = name
         self.dtype = dtype
         self.data = data
-
+    '''Maybe some internal conversion to bytes? maybe a superclass to handle many messages in the future'''
+    # this might be a stupid idea
     def convert_to_bytes(self):
         #TODO
         pass
