@@ -1,7 +1,7 @@
 from classes import Encoder, Decoder, PORT, SIZES
 import socket
-SETTINGS_HEADER = 0x1105
-ENCODER_39 = Encoder(['Settings Header', 'UINT16', 0x1105],
+SETTINGS_HEADER = 0x1005
+ENCODER_39 = Encoder(['Settings Header', 'UINT16', 0x1005],
                 ['Message ID', 'UINT16', 1])
 bytesToSend = ENCODER_39.convert_to_bytes()
 serverAddressPort  = ('localhost', PORT)
@@ -28,4 +28,4 @@ DECODER_310 = Decoder(['Settings Header', 'UINT16'],
                 )
 print(DECODER_310.decode(msgFromServer))
 # assert isinstance(msgFromServer, bytearray)
-# bytearray.decode(msgFromServer, )
+# bytearray.decode(msgFromServer
