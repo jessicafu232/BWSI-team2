@@ -54,7 +54,7 @@ class Decoder:
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '0x' + str(temp_byte)[4:6]+str(temp_byte)[8:10]
 
-            if sz == 'CHAR[15]':
+            elif sz == 'CHAR[15]':
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '%' + str(temp_byte)[2:6] + '%' + str(temp_byte)[6:8] + '%' + str(temp_byte)[8:11] \
                 + '%' + str(temp_byte)[11:13] + '%' + str(temp_byte)[13:15] + '%' + str(temp_byte)[15:]\
@@ -82,7 +82,7 @@ ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
 
 bytesToSend = ENCODER.convert_to_bytes()
 print(list(bytesToSend))
-serverAddressPort   = ('localhost', PORT)
+serverAddressPort = ('localhost', PORT)
 bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
