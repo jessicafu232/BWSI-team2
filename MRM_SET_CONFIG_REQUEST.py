@@ -1,4 +1,6 @@
-from commcheck import Encoder,Decoder, SIZES, PORT
+from comcheck import Encoder, Decoder, SIZES, PORT
+import socket
+
 SETTINGS_HEADER = 0x1001
 ENCODER = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 1],
@@ -10,7 +12,7 @@ ENCODER = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Antenna Mode', 'UINT8', 13],
                 ['Transmit Gain', 'UINT8', 17],
                 ['Code Channel', 'UINT8', 19],
-                ['Persist Flag', 'UNIT8', 23])
+                ['Persist Flag', 'UINT8', 23])
 bytesToSend = ENCODER.convert_to_bytes()
 print(list(bytesToSend))
 serverAddressPort   = ('localhost', PORT)
@@ -41,7 +43,7 @@ DECODER = Decoder(['Settings Header', 'UINT16'],
                 ['Antenna Mode', 'UINT8'],
                 ['Transmit Gain', 'UINT8'],
                 ['Code Channel', 'UINT8'],
-                ['Persist Flag', 'UNIT8']
+                ['Persist Flag', 'UINT8']
 )
 print(DECODER.decode(msgFromServer))
 # assert isinstance(msgFromServer, bytearray)
