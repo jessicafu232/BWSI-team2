@@ -10,4 +10,3 @@ DECODER_38 = Decoder(['Settings Header', 'UINT16'],
                 ['Message ID', 'UINT16'],
                 ['Status', 'UINT32']
                 )
-
