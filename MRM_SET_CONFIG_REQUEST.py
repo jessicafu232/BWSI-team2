@@ -1,4 +1,4 @@
-from comcheck import Encoder, Decoder, SIZES, PORT
+from commcheck import Encoder, Decoder, SIZES, PORT
 import socket
 
 SETTINGS_HEADER = 0x1001
