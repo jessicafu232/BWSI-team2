@@ -22,16 +22,12 @@ class Messages:
         bytes = bytearray()
         for x in self.list:
             size = SIZES[x[1]]
+            if x[2] > (2**(8*size)):
+                raise NameError('DATA TOO BIG') 
             if 'U' in x[1]:
-                if int(x[2]) < 0:
-                    if x[2] > (2**(8*size)):
-                        raise NameError('DATA TOO BIG') 
-                    raise NameError('UNSIGNED INTEGER CANNOT BE NEGATIVE') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=False)):
                     bytes.append(int(b))
             else:
-                if x[2] > (2**(8*size-1)):
-                        raise NameError('DATA TOO BIG') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=True)):
                     bytes.append(int(b))
         print(bytes)
@@ -68,7 +64,7 @@ DECODER = {
     'Settings Header': 2,
     'Message ID': 2,
     'UINT8': 1,
-    'UINT163': 2,
+    'UINT16': 2,
     'UINT32' : 4,
     'INT8': 1,
     'INT16': 2,
@@ -77,23 +73,30 @@ DECODER = {
     'Status': 4,
 }
 
-counter = 0
+start = 0
 
 recievedData = {}
 
 for sz in DECODER:
-    farform = counter + DECODER.get(sz)
-    if counter == 0 or sz == 'CHAR[15]':
-        temp_byte = msgFromServer[counter:farform]
-    #elif :
-    #    temp_byte = str(msgFromServer[counter:farform][:4]) + "-" + str(msgFromServer[counter:farform][4:6]) + "-" + str(msgFromServer[counter:farform][7:9]) + "-"
+    end = start + DECODER.get(sz)
+    if start == 0:
+        temp_byte = msgFromServer[start:end]
+        temp_byte = "0x" + str(temp_byte)[4:6]+str(temp_byte)[8:10]
+    elif sz == "CHAR[15]":
+        # %Y %m %d T %H %M %S
+        temp_byte = msgFromServer[start:end]
+        print(str(temp_byte))
+        # b'20220713T112329'
+        temp_byte = "%" + str(temp_byte)[2:6] + "%" + str(temp_byte)[6:8] + "%" \
+         + str(temp_byte)[8:11] + "%" + str(temp_byte)[11:13] + "%" + str(temp_byte)[13:15] \
+         + "%" + str(temp_byte)[15:]
     elif 'U' in sz:
-        temp_byte = int.from_bytes(msgFromServer[counter:farform], 'big', signed=False)
+        temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=False)
     else:
-        temp_byte = int.from_bytes(msgFromServer[counter:farform], 'big', signed=True)
+        temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
     temp_dict = {sz:temp_byte}
     recievedData.update(temp_dict)
-    counter = farform
+    start = end
 print(recievedData)
 
 # assert isinstance(msgFromServer, bytearray)
