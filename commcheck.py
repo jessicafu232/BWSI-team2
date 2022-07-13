@@ -22,16 +22,12 @@ class Messages:
         bytes = bytearray()
         for x in self.list:
             size = SIZES[x[1]]
+            if x[2] > (2**(8*size)):
+                raise NameError('DATA TOO BIG') 
             if 'U' in x[1]:
-                if int(x[2]) < 0:
-                    if x[2] > (2**(8*size)):
-                        raise NameError('DATA TOO BIG') 
-                    raise NameError('UNSIGNED INTEGER CANNOT BE NEGATIVE') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=False)):
                     bytes.append(int(b))
             else:
-                if x[2] > (2**(8*size-1)):
-                        raise NameError('DATA TOO BIG') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=True)):
                     bytes.append(int(b))
         print(bytes)
@@ -89,7 +85,6 @@ msgFromServer = UDPClientSocket.recvfrom(bufferSize)
 msg = "Message from Server {}".format(msgFromServer[0])
 print(msg)
 msgFromServer = msgFromServer[0]
-print(DATA.decode(msgFromServer))
 
 # assert isinstance(msgFromServer, bytearray)
 # bytearray.decode(msgFromServer, )
