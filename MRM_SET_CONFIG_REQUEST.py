@@ -1,4 +1,4 @@
-from commcheck import Encoder, Decoder, SIZES, PORT
+from commcheck import Encoder,Decoder, SIZES, PORT
 SETTINGS_HEADER = 0x1001
 ENCODER = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 1],
