@@ -25,10 +25,10 @@ msg = "Message from Server {}".format(msgFromServer[0])
 print(msg)
 msgFromServer = msgFromServer[0]
 
-DECODER_37 = Decoder(['Settings Header', 'UINT16'],
+DECODER_38 = Decoder(['Settings Header', 'UINT16'],
                 ['Message ID', 'UINT16'],
                 ['Status', 'UINT32']
                 )
-print(DECODER_37.decode(msgFromServer))
+print(DECODER_38.decode(msgFromServer))
 # assert isinstance(msgFromServer, bytearray)
 # bytearray.decode(msgFromServer, )
