@@ -31,4 +31,4 @@ DECODER_38 = Decoder(['Settings Header', 'UINT16'],
                 )
 print(DECODER_38.decode(msgFromServer))
 # assert isinstance(msgFromServer, bytearray)
-# bytearray.decode(msgFromServer, )
+# bytearray.decode(msgFromServer, 
