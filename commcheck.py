@@ -49,43 +49,42 @@ class Decoder:
         recievedData = {}
         for i, sz in enumerate([x[1] for x in self.list]):
             end = start + SIZES[sz]
+
             if start == 0:
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '0x' + str(temp_byte)[4:6]+str(temp_byte)[8:10]
+
             if sz == 'CHAR[15]':
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '%' + str(temp_byte)[2:6] + '%' + str(temp_byte)[6:8] + '%' + str(temp_byte)[8:11] \
-                + '%' + str(temp_byte)[11:13] + '%' + str(temp_byte)[13:15] + '%' + str(temp_byte)[15:]
+                + '%' + str(temp_byte)[11:13] + '%' + str(temp_byte)[13:15] + '%' + str(temp_byte)[15:]\
+
             elif sz in ['UINT8', 'UINT16', 'UINT32']:
                 temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=False)
+
             elif sz in ['INT8', 'INT16', 'INT32']:
                 temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
+
             temp_dict = {self.list[i][0]:temp_byte}
             recievedData.update(temp_dict)
             start = end
+
         return recievedData
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
-                ['Message ID', 'UINT16', 86],
-                ['uint8', 'UINT8', 69],
-                ['uint16', 'UINT16', 420],
-                ['uint32', 'UINT32', 69420],
-                ['int8', 'INT8', -69],
-                ['int16', 'INT16', -420],
-                ['int32', 'INT32', -69420]) 
+                ['Message ID',  'UINT16',    86],
+                ['uint8',       'UINT8',     69],
+                ['uint16',      'UINT16',    420],
+                ['uint32',      'UINT32',    69420],
+                ['int8',        'INT8',      -69],
+                ['int16',       'INT16',     -420],
+                ['int32',       'INT32',     -69420]) 
 
 bytesToSend = ENCODER.convert_to_bytes()
 print(list(bytesToSend))
 serverAddressPort   = ('localhost', PORT)
 bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-
-# 0xfffe is 0xff and 0xfe
-# b = []
-# for d in DATA:
-#    b.append(d.convert_to_bytes())
-# bytesToSend = bytearray(b)
-# print("HOST SENDING", bytesToSend)
 
 # Send to server using created UDP socket
 UDPClientSocket.sendto(bytesToSend, serverAddressPort)
@@ -107,5 +106,3 @@ DECODER = Decoder(
     ['Status'    , 'UINT32' ]
 )
 print(DECODER.decode(msgFromServer))
-# assert isinstance(msgFromServer, bytearray)
-# bytearray.decode(msgFromServer, )
