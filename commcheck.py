@@ -34,7 +34,6 @@ class Encoder:
                     raise NameError('DATA TOO BIG') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=True)):
                     bytes.append(int(b))
-        print(bytes)
         return bytes
 
 class Decoder:
@@ -48,13 +47,8 @@ class Decoder:
         start = 0
         recievedData = {}
         for i, sz in enumerate([x[1] for x in self.list]):
-            end = start + SIZES[sz]
-
-            if start == 0:
-                temp_byte = msgFromServer[start:end]
-                temp_byte = '0x' + str(temp_byte)[4:6]+str(temp_byte)[8:10]
-
-            elif sz == 'CHAR[15]':
+            end = start + SIZES[sz] 
+            if sz == 'CHAR[15]':
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '%' + str(temp_byte)[2:6] + '%' + str(temp_byte)[6:8] + '%' + str(temp_byte)[8:11] \
                 + '%' + str(temp_byte)[11:13] + '%' + str(temp_byte)[13:15] + '%' + str(temp_byte)[15:]\
