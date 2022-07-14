@@ -11,7 +11,7 @@ ip_address = ip2long(ip_address)
 print(ip_address)
 
 ip_address = 2130706433
-scanAmt = 4
+scanAmt = 10
 scanInfo = list()
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
@@ -188,7 +188,8 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Number of samples total', 'UINT32'],
                     ['Message index', 'UINT16'],
                     ['Number of messages total', 'UINT16'],
-                    ['Scan Data', 'INT32'])
+                    ['Scan Data', 'INT32']
+                    )
 
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
 for r in range(scanAmt):
@@ -214,7 +215,13 @@ for e in ENCODER_LIST:
     else:
         msgFromServer = UDPClientSocket.recvfrom(bufferSize) # problem?
         msgFromServer = msgFromServer[0]  
-        print(msgFromServer)
         msg = "Message from Server {}".format(msgFromServer[0])
+
         print(msg)
+        print("check")
         print(e.decode(msgFromServer)) # decoder
+
+        message = e.decode(msgFromServer)
+
+        if e is DECODER21:
+            print(len(msgFromServer))

@@ -62,7 +62,12 @@ class Decoder:
                 temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=False)
 
             elif sz in ['INT8', 'INT16', 'INT32']:
-                temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
+                if recievedData.get('Settings Header') == 61953 and sz == 'INT32':
+                    while end != len(msgFromServer):
+                        temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
+                        end = 
+                else:
+                    temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
 
             temp_dict = {self.list[i][0]:temp_byte}
             recievedData.update(temp_dict)
