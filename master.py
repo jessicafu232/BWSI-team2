@@ -107,10 +107,12 @@ DECODER314 = Decoder(['Settings Header', 'UINT16'],
 
 ENCODER_LIST = [ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36, ENCODER39, DECODER310, ENCODER311, DECODER312, ENCODER313, DECODER314]
 
+TIMEOUT = 2 # the time in seconds the socket will wait for data from the server
+
 serverAddressPort  = ('localhost', PORT)
 bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-
+UDPClientSocket.settimeout(TIMEOUT)
 for e in ENCODER_LIST:
     if isinstance(e, Encoder): # check if encoder
         bytesToSend = e.convert_to_bytes()

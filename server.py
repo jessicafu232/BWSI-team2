@@ -19,7 +19,7 @@ logger.addHandler(handler)
 
 # Create a UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.settimeout(10)
+sock.settimeout(20)
 
 # Bind the socket to the port
 try:
