@@ -1,6 +1,28 @@
 from classes import Encoder, Decoder, PORT, SIZES
 import socket
 
+ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
+                ['Message ID',  'UINT16',    86],
+                ['uint8',       'UINT8',     69],
+                ['uint16',      'UINT16',    420],
+                ['uint32',      'UINT32',    69420],
+                ['int8',        'INT8',      -69],
+                ['int16',       'INT16',     -420],
+                ['int32',       'INT32',     -69420]) 
+
+DECODER = Decoder(
+    ['Settings Header', 'UINT16' ]  ,
+    ['Message ID', 'UINT16' ]       ,
+    ['UINT8'     , 'UINT8'    ]     ,
+    ['UINT16'    , 'UINT16'   ]     ,
+    ['UINT32'    , 'UINT32'   ]     ,
+    ['INT8'      , 'INT8'     ]     ,
+    ['INT16'     , 'INT16'    ]     ,
+    ['INT32'     , 'INT32'    ]     ,
+    ['CHAR[15]'  , 'CHAR[15]' ]     ,
+    ['Status'    , 'UINT32' ]
+)
+
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 1],
                 ['Node ID', 'UINT32', 2],
@@ -107,9 +129,12 @@ DECODER314 = Decoder(['Settings Header', 'UINT16'],
 
 ENCODER_LIST = [ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36, ENCODER39, DECODER310, ENCODER311, DECODER312, ENCODER313, DECODER314]
 
+TIMEOUT = 2 # the time in seconds the socket will wait for data from the server
+
 serverAddressPort  = ('localhost', PORT)
 bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+UDPClientSocket.settimeout(TIMEOUT)
 
 for e in ENCODER_LIST:
     if isinstance(e, Encoder): # check if encoder
