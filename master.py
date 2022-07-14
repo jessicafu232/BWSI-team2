@@ -1,6 +1,6 @@
 from classes import Encoder, Decoder, PORT, SIZES
 import socket, struct
-
+import numpy as np
 ip_address = "127.0.0.1"
 
 def ip2long(ip):
@@ -11,6 +11,8 @@ ip_address = ip2long(ip_address)
 print(ip_address)
 
 ip_address = 2130706433
+scanAmt = 4
+scanInfo = list()
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -86,7 +88,7 @@ DECODER34 = Decoder(['Settings Header', 'UINT16'],
 
 ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
                 ['Message ID', 'UINT16', 35],
-                ['Scan Count', 'UINT16', 1],
+                ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
                 ['Scan Interval Time', 'UINT32', 10]
                 )
@@ -188,7 +190,11 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Number of messages total', 'UINT16'],
                     ['Scan Data', 'INT32'])
 
-ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36, DECODER21, ENCODER317, DECODER318]
+ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
+for r in range(scanAmt):
+    ENCODER_LIST.append(DECODER21)
+ENCODER_LIST.append(ENCODER317)
+ENCODER_LIST.append(DECODER318)
 
 TIMEOUT = 2 # the time in seconds the socket will wait for data from the server
 
@@ -196,14 +202,19 @@ serverAddressPort  = ('localhost', PORT)
 bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
+
+
+
 for e in ENCODER_LIST:
     if isinstance(e, Encoder): # check if encoder
         bytesToSend = e.convert_to_bytes()
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)
         
+     
     else:
         msgFromServer = UDPClientSocket.recvfrom(bufferSize) # problem?
-        msgFromServer = msgFromServer[0]
+        msgFromServer = msgFromServer[0]  
+        print(msgFromServer)
         msg = "Message from Server {}".format(msgFromServer[0])
         print(msg)
         print(e.decode(msgFromServer)) # decoder
