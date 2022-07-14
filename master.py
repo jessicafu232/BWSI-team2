@@ -1,6 +1,5 @@
 from classes import Encoder, Decoder, PORT, SIZES
 import socket, struct
-import numpy as np
 ip_address = "127.0.0.1"
 data_for_file = []
 
@@ -12,7 +11,7 @@ ip_address = ip2long(ip_address)
 print(ip_address)
 
 ip_address = 2130706433
-scanAmt = 10
+scanAmt = 3
 scanInfo = list()
 
 open('data.txt', 'w').close()
@@ -42,10 +41,10 @@ DECODER = Decoder(
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 31],
                 ['Node ID', 'UINT32', 2],
-                ['Scan Start (ps)', 'INT32', 3],
-                ['Scan End (ps)', 'INT32', 5],
-                ['Scan Resolution (bins)', 'UINT16', 32],
-                ['Base Integration Index', 'UINT16', 11],
+                ['Scan Start (ps)', 'INT32', -50000],
+                ['Scan End (ps)', 'INT32', 50000],
+                ['Scan Resolution (bins)', 'UINT16', 64],
+                ['Base Integration Index', 'UINT16', 6],
                 ['Segment 1 Num Samples', 'UINT16', 13],
                 ['Segment 2 Num Samples', 'UINT16', 15],
                 ['Segment 3 Num Samples', 'UINT16', 17],
@@ -55,7 +54,7 @@ ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Segment 3 Integration Multiple', 'UINT8', 3],
                 ['Segment 4 Integration Multiple', 'UINT8', 4],
                 ['Antenna Mode', 'UINT8', 2],
-                ['Transmit Gain', 'UINT8', 6],
+                ['Transmit Gain', 'UINT8', 25],
                 ['Code Channel', 'UINT8', 7],
                 ['Persist Flag', 'UINT8', 0])
 
@@ -203,7 +202,7 @@ ENCODER_LIST.append(DECODER318)
 TIMEOUT = 2 # the time in seconds the socket will wait for data from the server
 
 serverAddressPort  = ('localhost', PORT)
-bufferSize = 1024
+bufferSize = 4096
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
 
