@@ -218,10 +218,6 @@ for e in ENCODER_LIST:
         msg = "Message from Server {}".format(msgFromServer[0])
 
         print(msg)
-        print("check")
         print(e.decode(msgFromServer)) # decoder
 
         message = e.decode(msgFromServer)
-
-        if e is DECODER21:
-            print(len(msgFromServer))

@@ -1,3 +1,6 @@
+from turtle import goto
+
+
 PORT = 21210
 SIZES = {
     'UINT8': 1,
@@ -44,6 +47,7 @@ class Decoder:
         '''
         start = 0
         recievedData = {}
+        data = []
         for i, sz in enumerate([x[1] for x in self.list]):
             end = start + SIZES[sz] 
             if sz == 'CHAR[15]':
@@ -54,7 +58,6 @@ class Decoder:
             elif sz == 'CHAR[32]':
                 charString = ""
                 for a in msgFromServer[start:end]:
-                    print(a)
                     charString = charString + str(a) + ", "
                 temp_byte = charString
 
@@ -62,15 +65,19 @@ class Decoder:
                 temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=False)
 
             elif sz in ['INT8', 'INT16', 'INT32']:
-                if recievedData.get('Settings Header') == 61953 and sz == 'INT32':
-                    while end != len(msgFromServer):
-                        temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
-                        end = 
+                if recievedData.get('Settings Header') == 61953 and i == 19:
+                    flag=True
+                    while flag:
+                        data.append(int.from_bytes(msgFromServer[start:end], 'big', signed=True))
+                        flag = end < len(msgFromServer)
+                        start = end
+                        end = start + 4
+                    temp_byte = data
+                    # print(len(data))
                 else:
                     temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
 
             temp_dict = {self.list[i][0]:temp_byte}
             recievedData.update(temp_dict)
             start = end
-
         return recievedData
