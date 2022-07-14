@@ -6,7 +6,8 @@ SIZES = {
     'INT8': 1,
     'INT16': 2,
     'INT32' : 4,
-    'CHAR[15]' : 15
+    'CHAR[15]' : 15,
+    'CHAR[32]' : 32
 }
 
 class Encoder:
@@ -49,6 +50,13 @@ class Decoder:
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '%' + str(temp_byte)[2:6] + '%' + str(temp_byte)[6:8] + '%' + str(temp_byte)[8:11] \
                 + '%' + str(temp_byte)[11:13] + '%' + str(temp_byte)[13:15] + '%' + str(temp_byte)[15:]\
+
+            elif sz == 'CHAR[32]':
+                charString = ""
+                for a in msgFromServer[start:end]:
+                    print(a)
+                    charString = charString + str(a) + ", "
+                temp_byte = charString
 
             elif sz in ['UINT8', 'UINT16', 'UINT32']:
                 temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=False)
