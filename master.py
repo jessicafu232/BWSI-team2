@@ -2,6 +2,7 @@ from classes import Encoder, Decoder, PORT, SIZES
 import socket, struct
 import numpy as np
 ip_address = "127.0.0.1"
+data_for_file = []
 
 def ip2long(ip):
     packedIP = socket.inet_aton(ip)
@@ -13,6 +14,8 @@ print(ip_address)
 ip_address = 2130706433
 scanAmt = 10
 scanInfo = list()
+
+open('data.txt', 'w').close()
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -204,14 +207,11 @@ bufferSize = 1024
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
 
-
-
 for e in ENCODER_LIST:
     if isinstance(e, Encoder): # check if encoder
         bytesToSend = e.convert_to_bytes()
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)
         
-     
     else:
         msgFromServer = UDPClientSocket.recvfrom(bufferSize) # problem?
         msgFromServer = msgFromServer[0]  
@@ -221,3 +221,9 @@ for e in ENCODER_LIST:
         print(e.decode(msgFromServer)) # decoder
 
         message = e.decode(msgFromServer)
+
+        if e is DECODER21:
+            with open('data.txt', 'a') as f:
+                f.write(str(message['Scan Data']))
+
+f.close()

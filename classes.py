@@ -1,6 +1,5 @@
 from turtle import goto
 
-
 PORT = 21210
 SIZES = {
     'UINT8': 1,
