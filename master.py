@@ -1,5 +1,6 @@
 from classes import Encoder, Decoder, PORT, SIZES
 import socket, struct
+import matplotlib.pyplot as plt
 ip_address = "127.0.0.1"
 data_for_file = []
 
@@ -205,7 +206,7 @@ serverAddressPort  = ('localhost', PORT)
 bufferSize = 4096
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
-
+data = []
 for e in ENCODER_LIST:
     if isinstance(e, Encoder): # check if encoder
         bytesToSend = e.convert_to_bytes()
@@ -222,7 +223,8 @@ for e in ENCODER_LIST:
         message = e.decode(msgFromServer)
 
         if e is DECODER21:
+            data.append(message['Scan Data'])
             with open('data.txt', 'a') as f:
                 f.write(str(message['Scan Data']))
-
+plt.imshow(data)
 f.close()
