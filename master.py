@@ -13,7 +13,7 @@ ip_address = ip2long(ip_address)
 print(ip_address)
 
 ip_address = 2130706433
-scanAmt = 480
+scanAmt = 10
 scanInfo = list()
 
 open('data.txt', 'w').close()
@@ -198,8 +198,8 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
 for r in range(scanAmt * 3):
     ENCODER_LIST.append(DECODER21)
-ENCODER_LIST.append(ENCODER317)
-ENCODER_LIST.append(DECODER318)
+#ENCODER_LIST.append(ENCODER317)
+#ENCODER_LIST.append(DECODER318)
 
 TIMEOUT = 10 # the time in seconds the socket will wait for data from the server
 
@@ -230,14 +230,14 @@ for e in ENCODER_LIST:
 
         if e is DECODER21:
             if message['Message index'] < message['Number of messages total'] - 1:
-                message_portion.append(message['Scan Data'])
-                # for scan in message['Scan Data']:
-                #    message_portion.append(scan)
+                #message_portion.append(message['Scan Data'])
+                for scan in message['Scan Data']:
+                    message_portion.append(scan)
             else:
-                message_portion.append[message['Scan Data']]
+                #message_portion.append[message['Scan Data']]
 
-                #for scan in message['Scan Data']:
-                #    message_portion.append(scan)
+                for scan in message['Scan Data']:
+                    message_portion.append(scan)
                 data.append(message_portion)
                 #print(len(message_portion))
                 if message_portion != 960:
@@ -255,7 +255,7 @@ for e in ENCODER_LIST:
                 f.write(str(message['Scan Data']))
 
 # print(np.array(data, dtype=float).shape)
-plt.imshow(np.array(data, dtype=float).reshape(960, 480))
+plt.imshow(np.array(data, dtype=float).reshape(960, -1))
 plt.show()
 
 f.close()
