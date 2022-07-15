@@ -1,6 +1,7 @@
 from classes import Encoder, Decoder, PORT, SIZES
 import socket, struct
 import matplotlib.pyplot as plt
+import numpy as np
 ip_address = "127.0.0.1"
 data_for_file = []
 
@@ -12,7 +13,7 @@ ip_address = ip2long(ip_address)
 print(ip_address)
 
 ip_address = 2130706433
-scanAmt = 3
+scanAmt = 480
 scanInfo = list()
 
 open('data.txt', 'w').close()
@@ -42,10 +43,10 @@ DECODER = Decoder(
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 31],
                 ['Node ID', 'UINT32', 2],
-                ['Scan Start (ps)', 'INT32', -50000],
-                ['Scan End (ps)', 'INT32', 50000],
-                ['Scan Resolution (bins)', 'UINT16', 64],
-                ['Base Integration Index', 'UINT16', 6],
+                ['Scan Start (ps)', 'INT32', 500],
+                ['Scan End (ps)', 'INT32', 1000],
+                ['Scan Resolution (bins)', 'UINT16', 160],
+                ['Base Integration Index', 'UINT16', 15],
                 ['Segment 1 Num Samples', 'UINT16', 13],
                 ['Segment 2 Num Samples', 'UINT16', 15],
                 ['Segment 3 Num Samples', 'UINT16', 17],
@@ -54,8 +55,8 @@ ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Segment 2 Integration Multiple', 'UINT8', 2],
                 ['Segment 3 Integration Multiple', 'UINT8', 3],
                 ['Segment 4 Integration Multiple', 'UINT8', 4],
-                ['Antenna Mode', 'UINT8', 2],
-                ['Transmit Gain', 'UINT8', 25],
+                ['Antenna Mode', 'UINT8', 3],
+                ['Transmit Gain', 'UINT8', 0],
                 ['Code Channel', 'UINT8', 7],
                 ['Persist Flag', 'UINT8', 0])
 
@@ -93,7 +94,7 @@ ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
                 ['Message ID', 'UINT16', 35],
                 ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
-                ['Scan Interval Time', 'UINT32', 10]
+                ['Scan Interval Time', 'UINT32', 5]
                 )
 
 DECODER36 = Decoder(['Settings Header', 'UINT16'],
@@ -195,18 +196,21 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     )
 
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
-for r in range(scanAmt):
+for r in range(scanAmt * 3):
     ENCODER_LIST.append(DECODER21)
 ENCODER_LIST.append(ENCODER317)
 ENCODER_LIST.append(DECODER318)
 
-TIMEOUT = 2 # the time in seconds the socket will wait for data from the server
+TIMEOUT = 10 # the time in seconds the socket will wait for data from the server
 
 serverAddressPort  = ('localhost', PORT)
 bufferSize = 4096
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
 data = []
+
+message_portion = []
+
 for e in ENCODER_LIST:
     if isinstance(e, Encoder): # check if encoder
         bytesToSend = e.convert_to_bytes()
@@ -217,14 +221,41 @@ for e in ENCODER_LIST:
         msgFromServer = msgFromServer[0]  
         msg = "Message from Server {}".format(msgFromServer[0])
 
-        print(msg)
-        print(e.decode(msgFromServer)) # decoder
-
+        # print(msg)
+        # print(e.decode(msgFromServer)) # decoder
+    
         message = e.decode(msgFromServer)
 
+        print("Recieved Message #" + str(message['Message ID']))
+
         if e is DECODER21:
-            data.append(message['Scan Data'])
+            if message['Message index'] < message['Number of messages total'] - 1:
+                message_portion.append(message['Scan Data'])
+                # for scan in message['Scan Data']:
+                #    message_portion.append(scan)
+            else:
+                message_portion.append[message['Scan Data']]
+
+                #for scan in message['Scan Data']:
+                #    message_portion.append(scan)
+                data.append(message_portion)
+                #print(len(message_portion))
+                if message_portion != 960:
+                    while len(message_portion) != 960:
+                        message_portion.append(0)
+                print("message portion:")
+                print(message_portion)
+                message_portion = []
+
+            #   for p in range(350 - message['Number of Samples in message']):
+            #   message['Scan Data'].append(0)
+
+            # data.append(message['Scan Data'])
             with open('data.txt', 'a') as f:
                 f.write(str(message['Scan Data']))
-plt.imshow(data)
+
+# print(np.array(data, dtype=float).shape)
+plt.imshow(np.array(data, dtype=float).reshape(960, 480))
+plt.show()
+
 f.close()
