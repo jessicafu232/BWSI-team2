@@ -1,4 +1,4 @@
-from classes import Encoder, Decoder, PORT, SIZES
+from classes import Encoder, Decoder, PORT, SIZES, data_array
 import socket, struct
 import matplotlib.pyplot as plt
 import numpy as np
@@ -129,6 +129,10 @@ for e in ENCODER_LIST:
             else:
                 e.store_scan_info(message_portion)
                 message_portion = []
+
+print(data_array)
+
+np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
 
 print("hey?")
 #plt.imshow(np.array(e, dtype=float).reshape(960, -1))

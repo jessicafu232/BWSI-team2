@@ -1,6 +1,7 @@
 from pyexpat.errors import messages
 from turtle import goto
 import socket, struct
+import numpy as np
 
 PORT = 21210
 SIZES = {
@@ -23,6 +24,8 @@ STATUSES = {1: 'STATUS 1: GENERIC FAILURE',
             7: 'STATUS 7: WRONG BUFFER SIZE',
             8: 'STATUS 8: UNRECOGNIZED MESSAGE TYPE'
 }   
+
+data_array = []
 
 TIMEOUT = 10
 serverAddressPort = ('localhost', PORT)
@@ -130,6 +133,7 @@ class Decoder:
     def store_scan_info(self, m):
         '''stores the scan info in a data.txt file'''
 
+        data_array.append(m)
         with open('data.txt', 'a') as f:
                 f.write(str(m))
 
