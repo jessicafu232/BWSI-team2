@@ -127,15 +127,10 @@ class Decoder:
             return message
 
 
-    def store_scan_info(self):
+    def store_scan_info(self, m):
         '''stores the scan info in a data.txt file'''
-        message = self.receive_message()
 
-        if message['Settings Header'] != 0xF201:
-            raise NameError('NOT SCAN INFO MESSAGE TYPE')
-        
-        else:
-            with open('data.txt', 'a') as f:
-                f.write(str(message['Scan Data']))
+        with open('data.txt', 'a') as f:
+                f.write(str(m))
 
         return None

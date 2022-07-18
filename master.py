@@ -115,11 +115,21 @@ ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, EN
 for r in range(scanAmt * 3):
     ENCODER_LIST.append(DECODER21)
 
+message_portion = []
+
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
     elif isinstance(e, Decoder):
-        e.receive_message(4096)
-
+        message = e.receive_message(4096)
         if e is DECODER21:
-            e.store_scan_info()
+            if message['Message index'] < message['Number of messages total'] - 1:
+                for sn in message['Scan Data']:
+                    message_portion.append(sn)
+            else:
+                e.store_scan_info(message_portion)
+                message_portion = []
+
+print("hey?")
+#plt.imshow(np.array(e, dtype=float).reshape(960, -1))
+#plt.show()
