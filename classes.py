@@ -1,4 +1,6 @@
+from pyexpat.errors import messages
 from turtle import goto
+import socket, struct
 
 PORT = 21210
 SIZES = {
@@ -11,6 +13,22 @@ SIZES = {
     'CHAR[15]' : 15,
     'CHAR[32]' : 32
 }
+
+STATUSES = {1: 'STATUS 1: GENERIC FAILURE',
+            2: 'STATUS 2: WRONG OP MODE',
+            3: 'STATUS 3: UNSUPPORTED VALUE',
+            4: 'STATUS 4: INVALID DURING SLEEP',
+            5: 'STATUS 5: WRONG MESSAGE SIZE',
+            6: 'STATUS 6: NOT ENABLED',
+            7: 'STATUS 7: WRONG BUFFER SIZE',
+            8: 'STATUS 8: UNRECOGNIZED MESSAGE TYPE'
+}   
+
+TIMEOUT = 10
+serverAddressPort = ('localhost', PORT)
+bufferSize = 4096
+UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+UDPClientSocket.settimeout(TIMEOUT)
 
 class Encoder:
     def __init__(self, *list):
@@ -36,9 +54,18 @@ class Encoder:
                     bytes.append(int(b))
         return bytes
 
+    def send_message(self):
+        print('Sending: ', self.list)
+
+        bytesToSend = self.convert_to_bytes()
+        UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+
+        return None
+
 class Decoder:
     def __init__(self, *list):
         self.list = list
+        self.message_portion = []
 
     def decode(self, msgFromServer) -> dict:
         '''
@@ -80,3 +107,35 @@ class Decoder:
             recievedData.update(temp_dict)
             start = end
         return recievedData
+
+    def receive_message(self, bufferSize=4096):
+        #receives the message
+        msgFromServer = UDPClientSocket.recvfrom(bufferSize)
+        msgFromServer = msgFromServer[0]
+        #msg = "Message from Server {}".format(msgFromServer[0])
+        message = self.decode(msgFromServer)
+        print("Message from Server: ", message)
+
+        #checks the status to make sure its 0
+        if message.get('Settings Header') != 61953:
+            status = message['Status']
+            if status != 0:
+                raise ValueError('Message #' + str(message['Settings Header']) + ' ' + STATUSES[status])
+            else:
+                return message
+        else:
+            return message
+
+
+    def store_scan_info(self):
+        '''stores the scan info in a data.txt file'''
+        message = self.receive_message()
+
+        if message['Settings Header'] != 0xF201:
+            raise NameError('NOT SCAN INFO MESSAGE TYPE')
+        
+        else:
+            with open('data.txt', 'a') as f:
+                f.write(str(message['Scan Data']))
+
+        return None

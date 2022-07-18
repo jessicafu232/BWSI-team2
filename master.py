@@ -2,21 +2,9 @@ from classes import Encoder, Decoder, PORT, SIZES
 import socket, struct
 import matplotlib.pyplot as plt
 import numpy as np
-ip_address = "127.0.0.1"
-data_for_file = []
-
-def ip2long(ip):
-    packedIP = socket.inet_aton(ip)
-    return struct.unpack("!L", packedIP)[0]
-
-ip_address = ip2long(ip_address)
-print(ip_address)
-
-ip_address = 2130706433
-scanAmt = 10
-scanInfo = list()
 
 open('data.txt', 'w').close()
+scanAmt = 3
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -42,11 +30,11 @@ DECODER = Decoder(
 
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 31],
-                ['Node ID', 'UINT32', 2],
-                ['Scan Start (ps)', 'INT32', 500],
-                ['Scan End (ps)', 'INT32', 1000],
-                ['Scan Resolution (bins)', 'UINT16', 160],
-                ['Base Integration Index', 'UINT16', 15],
+                ['Node ID', 'UINT32', 1],
+                ['Scan Start (ps)', 'INT32', 23342],
+                ['Scan End (ps)', 'INT32', 81935],
+                ['Scan Resolution (bins)', 'UINT16', 32],
+                ['Base Integration Index', 'UINT16', 11],
                 ['Segment 1 Num Samples', 'UINT16', 13],
                 ['Segment 2 Num Samples', 'UINT16', 15],
                 ['Segment 3 Num Samples', 'UINT16', 17],
@@ -55,9 +43,9 @@ ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Segment 2 Integration Multiple', 'UINT8', 2],
                 ['Segment 3 Integration Multiple', 'UINT8', 3],
                 ['Segment 4 Integration Multiple', 'UINT8', 4],
-                ['Antenna Mode', 'UINT8', 3],
-                ['Transmit Gain', 'UINT8', 0],
-                ['Code Channel', 'UINT8', 7],
+                ['Antenna Mode', 'UINT8', 2],
+                ['Transmit Gain', 'UINT8', 63],
+                ['Code Channel', 'UINT8', 0],
                 ['Persist Flag', 'UINT8', 0])
 
 DECODER32 = Decoder(['Settings Header', 'UINT16'],
@@ -102,77 +90,6 @@ DECODER36 = Decoder(['Settings Header', 'UINT16'],
                 ['Status', 'UINT32']
                 )
 
-ENCODER37 = Encoder(['Settings Header', 'UINT16', 0x1004],
-                ['Message ID', 'UINT16', 37],
-                ['MRM IP Address', 'UINT32', ip_address], # BIG PROBLEM: IP ADDRESS??
-                ['MRM IP Port', 'UINT16', 21210],
-                ['Reserved', 'UINT16', 4])
-
-DECODER38 = Decoder(['Settings Header', 'UINT16'],
-                ['Message ID', 'UINT16'],
-                ['Status', 'UINT32']
-                )
-
-ENCODER39 = Encoder(['Settings Header', 'UINT16', 0x1005],
-                ['Message ID', 'UINT16', 39])
-
-DECODER310 = Decoder(['Settings Header', 'UINT16'],
-                ['Message ID', 'UINT16'],
-                ['Status', 'UINT32']
-                )
-
-ENCODER311 = Encoder(['Settings Header', 'UINT16', 0x1006],
-                ['Message ID', 'UINT16', 311],
-                ['Filter Mask', 'UINT16', 1],
-                ['Motion Filter Index', 'UINT8', 1],
-                ['Reserved', 'UINT8', 3]
-                )
-
-DECODER312 = Decoder(['Settings Header', 'UINT16'],
-                ['Message ID', 'UINT16'],
-                ['Status', 'UINT32']
-                )
-
-ENCODER313 = Encoder(['Settings Header', 'UINT16', 0x1007],
-                ['Message ID', 'UINT16', 313])
-
-DECODER314 = Decoder(['Settings Header', 'UINT16'],
-                ['Message ID', 'UINT16'],
-                ['Filter Mask', 'UINT16'],
-                ['Motion Filter Index', 'UINT8'],
-                ['Reserved', 'UINT8'],
-                ['Status', 'UINT32'])
-
-ENCODER315 = Encoder(['Settings Header', 'UINT16', 0xF001],
-                ['Message ID', 'UINT16', 315])
-
-DECODER316 = Decoder(['Settings Header', 'UINT16'],
-                ['Message ID', 'UINT16'],
-                ['MRM Version Major', 'UINT8'],
-                ['MRM Version Minor', 'UINT8'],
-                ['MRM Version Build', 'UINT16'],
-                ['UWB Kernel Major', 'UINT8'],
-                ['UWB Kernel Minor', 'UINT8'],
-                ['UWB Kernel Build', 'UINT16'],
-                ['FPGA Firmware Version', 'UINT8'],
-                ['FPGA Firmware Year', 'UINT8'],
-                ['FPGA Firmware Month', 'UINT8'],
-                ['FPGA Firmware Day', 'UINT8'],
-                ['Serial Number', 'UINT32'],
-                ['Board Revision', 'UINT8'],
-                ['Power-On BIT Test Result', 'UINT8'],
-                ['Board Type', 'UINT8'],
-                ['Transmitter Configuration', 'UINT8'],
-                ['Temp', 'INT32'],
-                ['Package Version', 'CHAR[32]'],
-                ['Status', 'UINT32'])
-
-ENCODER317 = Encoder(['Settings Header', 'UINT16', 0xF002],
-                ['Message ID', 'UINT16', 317])
-
-DECODER318 = Decoder(['Settings Header', 'UINT16'],
-                ['Message ID', 'UINT16'])
-
 DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Message ID', 'UINT16'],
                     ['Source ID', 'UINT32'],
@@ -194,68 +111,15 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Number of messages total', 'UINT16'],
                     ['Scan Data', 'INT32']
                     )
-
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
 for r in range(scanAmt * 3):
     ENCODER_LIST.append(DECODER21)
-#ENCODER_LIST.append(ENCODER317)
-#ENCODER_LIST.append(DECODER318)
-
-TIMEOUT = 10 # the time in seconds the socket will wait for data from the server
-
-serverAddressPort  = ('localhost', PORT)
-bufferSize = 4096
-UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-UDPClientSocket.settimeout(TIMEOUT)
-data = []
-
-message_portion = []
 
 for e in ENCODER_LIST:
-    if isinstance(e, Encoder): # check if encoder
-        bytesToSend = e.convert_to_bytes()
-        UDPClientSocket.sendto(bytesToSend, serverAddressPort)
-        
-    else:
-        msgFromServer = UDPClientSocket.recvfrom(bufferSize) # problem?
-        msgFromServer = msgFromServer[0]  
-        msg = "Message from Server {}".format(msgFromServer[0])
-
-        # print(msg)
-        # print(e.decode(msgFromServer)) # decoder
-    
-        message = e.decode(msgFromServer)
-
-        print("Recieved Message #" + str(message['Message ID']))
+    if isinstance(e, Encoder):
+        e.send_message()
+    elif isinstance(e, Decoder):
+        e.receive_message(4096)
 
         if e is DECODER21:
-            if message['Message index'] < message['Number of messages total'] - 1:
-                #message_portion.append(message['Scan Data'])
-                for scan in message['Scan Data']:
-                    message_portion.append(scan)
-            else:
-                #message_portion.append[message['Scan Data']]
-
-                for scan in message['Scan Data']:
-                    message_portion.append(scan)
-                data.append(message_portion)
-                #print(len(message_portion))
-                if message_portion != 960:
-                    while len(message_portion) != 960:
-                        message_portion.append(0)
-                print("message portion:")
-                print(message_portion)
-                message_portion = []
-
-            #   for p in range(350 - message['Number of Samples in message']):
-            #   message['Scan Data'].append(0)
-
-            # data.append(message['Scan Data'])
-            with open('data.txt', 'a') as f:
-                f.write(str(message['Scan Data']))
-
-# print(np.array(data, dtype=float).shape)
-plt.imshow(np.array(data, dtype=float).reshape(960, -1))
-plt.show()
-
-f.close()
+            e.store_scan_info()
