@@ -134,6 +134,14 @@ print(data_array)
 
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
 
-print("hey?")
-#plt.imshow(np.array(e, dtype=float).reshape(960, -1))
-#plt.show()
+time = 0
+times = []
+
+for i in range(len(data_array[0])):
+    times += [time]
+    time += int(32 * 1.907)
+
+plt.plot(times, data_array[0])
+plt.xlabel('Time (ps)')
+plt.ylabel('Amplitude')
+plt.show()
