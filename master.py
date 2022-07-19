@@ -120,7 +120,6 @@ for r in range(scanAmt * 3):
 
 message_portion = []
 
-
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()

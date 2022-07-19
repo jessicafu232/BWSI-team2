@@ -6,8 +6,7 @@ import math
 import glob
 import os
 
-data_array = np.load(array_as_numpy.npy)
-scanAmt = 3
+data_array = np.load("array_as_numpy.npy")
 
 list_of_files = glob.glob('../emulator/output/*')
 latest_file = max(list_of_files, key=os.path.getctime)
@@ -24,12 +23,17 @@ t = 0.017 * scanAmt # s
 print(positions)
 
 delta_pos = positions['platform_pos'][0,0] - positions['platform_pos'][scanAmt - 1,0]
+print(delta_pos)
 v = abs(delta_pos / t)
 wavelength = c / (4.3 * 10**9)
-range_from_plane = math.sqrt((positions['platform_pos'][0,0] - 10)**2 + (positions['platform_pos'][0,1] - 10)**2 + (positions['platform_pos'][0,2])**2)
+
+range_from_plane = math.sqrt((positions['platform_pos'][0,0])**2 + \
+    (positions['platform_pos'][0,1])**2 + \
+    (positions['platform_pos'][0,2])**2)
+print(range_from_plane)
 
 range_resolution = c / (2 * 1.1 * 10**9)
-cross_range_resolution = (wavelength * range_from_plane) / (2 * v * t)
+cross_range_resolution = (wavelength * range_from_plane) / (2 * delta_pos)
 
 print(range_resolution)
 print(cross_range_resolution)
