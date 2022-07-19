@@ -9,13 +9,12 @@ import os
 
 def main():
     data_array = np.load('array_as_numpy.npy')
-    scanAmt = 5
 
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
 
-    X_RES, Y_RES = 100, 100
+    X_RES, Y_RES = 800, 800
     potentials = np.zeros((X_RES, Y_RES))
 
     with open(latest_file, 'rb') as f:
@@ -49,17 +48,17 @@ def main():
         times += [time]
         time += int(32 * 1.907)
 
-    
-    for i in range(Y_RES):
-        for j in range(X_RES):
-            distance_to_scan = math.sqrt((positions['platform_pos'][0,0] - (i/X_RES*4)) **2 + (positions['platform_pos'][0,1] - (j/Y_RES*4))**2 + \
-                (positions['platform_pos'][0,2])**2)
-            #print(f'{i}, {j}, distance',distance_to_scan)
-            index = range_to_index(distance_to_scan)-2786
-            #print(i)
-            if index > 699: continue
-            amplitude = data_array[0, index]
-            potentials[i,j] += amplitude
+    for scan in range(9):
+        for i in range(Y_RES):
+            for j in range(X_RES):
+                distance_to_scan = math.sqrt((positions['platform_pos'][scan*50,0] - (i/X_RES*-50)) **2 + (positions['platform_pos'][scan*50,1] - (j/Y_RES*50))**2 + \
+                    (positions['platform_pos'][scan*50,2])**2)
+                #print(f'{i}, {j}, distance',distance_to_scan)
+                index = range_to_index(distance_to_scan) - 3500
+                #print(i)
+                if abs(index) > 699: continue
+                amplitude = data_array[scan*50, index]
+                potentials[i,j] += amplitude
 
     plt.imshow(potentials)
     plt.show()

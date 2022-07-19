@@ -4,6 +4,7 @@ import socket, struct
 import numpy as np
 
 PORT = 21210
+scanAmt = 500
 SIZES = {
     'UINT8': 1,
     'UINT16': 2,
@@ -117,7 +118,7 @@ class Decoder:
         msgFromServer = msgFromServer[0]
         #msg = "Message from Server {}".format(msgFromServer[0])
         message = self.decode(msgFromServer)
-        print("Message from Server: ", message)
+        #print("Message from Server: ", message)
 
         #checks the status to make sure its 0
         if message.get('Settings Header') != 61953:
