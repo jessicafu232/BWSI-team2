@@ -2,9 +2,10 @@ from classes import Encoder, Decoder, PORT, SIZES, data_array
 import socket, struct
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle
 
 open('data.txt', 'w').close()
-scanAmt = 3
+scanAmt = 1
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -132,16 +133,37 @@ for e in ENCODER_LIST:
 
 print(data_array)
 
+with open('..\\emulator\\output\\20220714T164258_5_point_scatter_platform_pos.pkl', 'rb') as f:
+    pickle_file = pickle.load(f)
+
+print(pickle_file)
+
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
 
 time = 0
 times = []
 
-for i in range(len(data_array[0])):
+full_array = np.add(np.array(data_array[0], dtype=float), np.array(data_array[1], dtype=float), np.array(data_array[2], dtype=float))
+
+for i in range(len(full_array)):
     times += [time]
     time += int(32 * 1.907)
 
-plt.plot(times, data_array[0])
+plt.subplot(211)
+plt.plot(times, full_array)
+plt.xlabel('Time (ps)')
+plt.ylabel('Amplitude')
+
+
+time = 0
+times2 = []
+
+for i in range(len(data_array[1])):
+    times2 += [time]
+    time += int(32 * 1.907)
+
+plt.subplot(212)
+plt.plot(times2, data_array[1])
 plt.xlabel('Time (ps)')
 plt.ylabel('Amplitude')
 plt.show()
