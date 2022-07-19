@@ -3,9 +3,12 @@ import socket, struct
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+import math
+import glob
+import os
 
 open('data.txt', 'w').close()
-scanAmt = 1
+scanAmt = 3
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -133,10 +136,29 @@ for e in ENCODER_LIST:
 
 print(data_array)
 
-with open('..\\emulator\\output\\20220714T164258_5_point_scatter_platform_pos.pkl', 'rb') as f:
-    pickle_file = pickle.load(f)
+list_of_files = glob.glob('../emulator/output/*')
+latest_file = max(list_of_files, key=os.path.getctime)
+print(latest_file)
 
-print(pickle_file)
+with open('..\\emulator\\output\\20220719T102027_5_point_scatter_platform_pos.pkl', 'rb') as f:
+    positions = pickle.load(f)
+
+c = 299792458 #m/s
+t = 0.017 * scanAmt # s
+
+print(positions)
+
+delta_pos = positions['platform_pos'][0,0] - positions['platform_pos'][scanAmt - 1,0]
+v = abs(delta_pos / t)
+wavelength = c / (4.3 * 10**9)
+range_from_plane = math.sqrt((positions['platform_pos'][0,0] - 10)**2 + (positions['platform_pos'][0,1] - 10)**2 + (positions['platform_pos'][0,2])**2)
+
+range_resolution = c / (2 * 1.1 * 10**9)
+cross_range_resolution = (wavelength * range_from_plane) / (2 * v * t)
+
+print(range_resolution)
+print(cross_range_resolution)
+
 
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
 
@@ -148,6 +170,8 @@ full_array = np.add(np.array(data_array[0], dtype=float), np.array(data_array[1]
 for i in range(len(full_array)):
     times += [time]
     time += int(32 * 1.907)
+
+'''
 
 plt.subplot(211)
 plt.plot(times, full_array)
@@ -167,3 +191,5 @@ plt.plot(times2, data_array[1])
 plt.xlabel('Time (ps)')
 plt.ylabel('Amplitude')
 plt.show()
+
+'''
