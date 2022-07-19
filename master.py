@@ -1,4 +1,4 @@
-from classes import Encoder, Decoder, PORT, SIZES, data_array
+from classes import Encoder, Decoder, PORT, SIZES, data_array, scanAmt
 import socket, struct
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +8,6 @@ import glob
 import os
 
 open('data.txt', 'w').close()
-scanAmt = 3
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -121,6 +120,7 @@ for r in range(scanAmt * 3):
 
 message_portion = []
 
+
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
@@ -133,7 +133,7 @@ for e in ENCODER_LIST:
             else:
                 e.store_scan_info(message_portion)
                 message_portion = []
-
+'''
 print(data_array)
 
 list_of_files = glob.glob('../emulator/output/*')
@@ -171,7 +171,7 @@ for i in range(len(full_array)):
     times += [time]
     time += int(32 * 1.907)
 
-'''
+
 
 plt.subplot(211)
 plt.plot(times, full_array)
