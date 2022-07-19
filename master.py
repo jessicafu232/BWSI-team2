@@ -129,9 +129,12 @@ for e in ENCODER_LIST:
             if message['Message index'] < message['Number of messages total'] - 1:
                 for sn in message['Scan Data']:
                     message_portion.append(sn)
-            else:
-                e.store_scan_info(message_portion)
+            else: # message index == # of total messages
+                data_array.append(message_portion)
                 message_portion = []
+
+np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
+
 '''
 print(data_array)
 

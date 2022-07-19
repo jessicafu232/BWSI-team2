@@ -4,7 +4,6 @@ import socket, struct
 import numpy as np
 
 PORT = 21210
-scanAmt = 462
 SIZES = {
     'UINT8': 1,
     'UINT16': 2,
@@ -130,12 +129,13 @@ class Decoder:
         else:
             return message
 
-
+    '''
     def store_scan_info(self, m):
-        '''stores the scan info in a data.txt file'''
+        stores the scan info in a data.txt file
 
         data_array.append(m)
         with open('data.txt', 'a') as f:
                 f.write(str(m))
 
         return None
+    '''
