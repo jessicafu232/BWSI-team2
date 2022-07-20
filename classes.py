@@ -4,7 +4,7 @@ import socket, struct
 import numpy as np
 
 PORT = 21210
-scanAmt = 50
+scanAmt = 400
 SIZES = {
     'UINT8': 1,
     'UINT16': 2,
@@ -59,7 +59,7 @@ class Encoder:
         return bytes
 
     def send_message(self):
-        print('Sending: ', self.list)
+        #print('Sending: ', self.list)
 
         bytesToSend = self.convert_to_bytes()
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)

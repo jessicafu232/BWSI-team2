@@ -137,7 +137,7 @@ for e in ENCODER_LIST:
                 for sn in message['Scan Data']:
                     message_portion.append(sn)
                 data_array.append(message_portion)
-                print(len(message_portion))
+                #print(len(message_portion))
                 message_portion = []
 
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
