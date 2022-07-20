@@ -7,7 +7,8 @@ import math
 import glob
 import os
 
-open('data.txt', 'w').close()
+scan_start = 0
+scan_end = 250000
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
@@ -34,8 +35,8 @@ DECODER = Decoder(
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Message ID', 'UINT16', 31],
                 ['Node ID', 'UINT32', 1],
-                ['Scan Start (ps)', 'INT32', 0],
-                ['Scan End (ps)', 'INT32', 58593],
+                ['Scan Start (ps)', 'INT32', scan_start],
+                ['Scan End (ps)', 'INT32', scan_end],
                 ['Scan Resolution (bins)', 'UINT16', 32],
                 ['Base Integration Index', 'UINT16', 11],
                 ['Segment 1 Num Samples', 'UINT16', 13],
@@ -115,7 +116,9 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Scan Data', 'INT32']
                     )
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
-for r in range(scanAmt * 3):
+num_of_msg = ((scan_end - scan_start) // (61 * 350)) + 1
+print("num of messages", num_of_msg)
+for r in range(scanAmt * num_of_msg):
     ENCODER_LIST.append(DECODER21)
 
 message_portion = []
@@ -126,11 +129,15 @@ for e in ENCODER_LIST:
     elif isinstance(e, Decoder):
         message = e.receive_message(4096)
         if e is DECODER21:
-            if message['Message index'] < message['Number of messages total'] - 1:
+            #print(message)
+            if message['Message index'] < num_of_msg - 1:
                 for sn in message['Scan Data']:
                     message_portion.append(sn)
             else: # message index == # of total messages
+                for sn in message['Scan Data']:
+                    message_portion.append(sn)
                 data_array.append(message_portion)
+                print(len(message_portion))
                 message_portion = []
 
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)

@@ -4,7 +4,7 @@ import socket, struct
 import numpy as np
 
 PORT = 21210
-scanAmt = 500
+scanAmt = 50
 SIZES = {
     'UINT8': 1,
     'UINT16': 2,
