@@ -1,5 +1,6 @@
 from classes import scanAmt
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import pickle
 import math
@@ -104,10 +105,12 @@ def main():
                 amplitude = data_array[(which_scan, ind)]
                 #print('amplitude', amplitude)
                 potentials[i,j] += amplitude
+
+
     # dimensions of the original image (m)
-    X = 20
-    Y = 20
-    X_RES, Y_RES = 200, 200
+    X = 25
+    Y = 25
+    X_RES, Y_RES = 250, 250
     potentials = np.zeros((X_RES, Y_RES))
     # finding dimensions of a single pixel
     pixel_x = X / X_RES
@@ -118,8 +121,8 @@ def main():
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
         distance_to_scan = np.sqrt(
-                            (positions['platform_pos'][which_scan,0] - x_pos + 10)**2 + \
-                            (positions['platform_pos'][which_scan,1] - y_pos + 10)**2 + \
+                            (positions['platform_pos'][which_scan,0] - x_pos + 13)**2 + \
+                            (positions['platform_pos'][which_scan,1] - y_pos + 15)**2 + \
                             (positions['platform_pos'][which_scan,2])**2 
                             )
         times = 2 * distance_to_scan / 299792458 
@@ -129,7 +132,7 @@ def main():
             for j in range(X_RES):
                 potentials[i,j] += data_array[which_scan, int(indexes[i,j])]
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
-        #print('time', time.time()-start_time)
+    print('time', time.time()-start_time)
     '''
     for scan in range(24):
         for i in range(Y_RES):
@@ -144,7 +147,7 @@ def main():
                 potentials[i,j] += amplitude
     '''
 
-    plt.imshow(potentials)
+    plt.imshow(potentials, origin='lower', cmap='magma')
     plt.show()
 
 # I love basic radar eq
