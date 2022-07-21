@@ -35,6 +35,8 @@ def main():
     with open(latest_file, 'rb') as f:
         positions = pickle.load(f)
 
+    print(positions)
+
     c = 299792458 #m/s
 
     delta_pos = abs(positions['platform_pos'][0,0] - positions['platform_pos'][config['Scan Amount'] - 1, 0])
@@ -81,8 +83,8 @@ def main():
     # looping through and creating a list with each tick value, for ten total ticks.
     # the tick amount is the same for every image, but the size between ticks differs
     for tick in range(10):
-        ticks_x.append(tick * (X // 10) - x_offset)
-        ticks_y.append(tick * (Y // 10) - y_offset)
+        ticks_x.append(round(tick * (X / 10) - x_offset, 1))
+        ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
 
     for scan in tqdm(range(config['Scan Amount'] // config['Skip'])):
         which_scan = scan * config['Skip']
@@ -99,6 +101,13 @@ def main():
         for i in range(Y_RES):
             for j in range(X_RES):
                 potentials[i,j] += data_array[which_scan, int(indexes[i,j])]
+
+    minimum = np.min(potentials)
+
+    potentials = potentials + abs(minimum)
+
+    print(potentials)
+
 
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
     print('time', time.time()-start_time)

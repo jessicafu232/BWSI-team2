@@ -44,7 +44,7 @@ ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Scan Start (ps)', 'INT32', scan_start],
                 ['Scan End (ps)', 'INT32', scan_end],
                 ['Scan Resolution (bins)', 'UINT16', 32], #DONT CHANGE
-                ['Base Integration Index', 'UINT16', 13],
+                ['Base Integration Index', 'UINT16', 11],
                 ['Segment 1 Num Samples', 'UINT16', 13],
                 ['Segment 2 Num Samples', 'UINT16', 15],
                 ['Segment 3 Num Samples', 'UINT16', 17],
@@ -92,7 +92,7 @@ ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
                 ['Message ID', 'UINT16', 35],
                 ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
-                ['Scan Interval Time', 'UINT32', 5]
+                ['Scan Interval Time', 'UINT32', 2000]
                 )
 
 DECODER36 = Decoder(['Settings Header', 'UINT16'],
@@ -122,7 +122,7 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Scan Data', 'INT32']
                     )
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
-num_of_msg = ((scan_end - scan_start) // (61 * 350)) + 1
+num_of_msg = int((scan_end - scan_start) // (61.024 * 350)) + 1
 print("num of messages", num_of_msg)
 for r in range(scanAmt * num_of_msg):
     ENCODER_LIST.append(DECODER21)
