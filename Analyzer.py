@@ -40,7 +40,7 @@ def main():
     print('cross range', cross_range_resolution)
 
     #np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
-# Will find out later what this is
+    # Will find out later what this is
     time = 0
     times = []
 
@@ -53,76 +53,43 @@ def main():
     # 2) Using our Pixel Size, finding distance from each pixel to the platform, then using
     # this we calculate the time of the signal to send and come back. Then, knowing the delay 
     # between each individual scanpoint, we align that time to the scan data time, and then
-    # assign that amplitude value to that pixel. 
+    # assign that amplitude value to that pixel.     
 
-    
-
-    print(len(data_array[0]))
-
-    '''
-    for i in range(Y_RES):
-        for j in range(X_RES):
-            # position in meters
-            x_position_of_pixel = j * pixel_x
-            y_position_of_pixel = i * pixel_y
-
-            distance_to_scan = math.sqrt(
-                (positions['platform_pos'][0,0] - x_position_of_pixel + 10)**2 + \
-                (positions['platform_pos'][0,1] - y_position_of_pixel + 10)**2 + \
-                (positions['platform_pos'][0,2])**2 \
-                )
-
-            #print(distance_to_scan)
-            ind = range_to_index(distance_to_scan)
-            if ind > 4127: continue
-            #print('index', ind)
-            amplitude = data_array[(scan, ind)]
-            #print('amplitude', amplitude)
-            potentials[j,i] += amplitude
-    '''
     import time
     start_time = time.time()
 
-    for scan in range(3):
-        break
-        for i in range(Y_RES):
-            for j in range(X_RES):  
-                # position in meters
-                x_position_of_pixel = j * pixel_x
-                y_position_of_pixel = i * pixel_y
-                which_scan = scan * 10
-
-                distance_to_scan = math.sqrt(
-                    (positions['platform_pos'][which_scan,0] - x_position_of_pixel + 10)**2 + \
-                    (positions['platform_pos'][which_scan,1] - y_position_of_pixel + 10)**2 + \
-                    (positions['platform_pos'][which_scan,2])**2 \
-                )
-    
-                #print(distance_to_scan)
-                ind = range_to_index(distance_to_scan)
-                if ind > 4127: continue
-                #print('index', ind)
-                amplitude = data_array[(which_scan, ind)]
-                #print('amplitude', amplitude)
-                potentials[i,j] += amplitude
-
-
     # dimensions of the original image (m)
-    X = 25
-    Y = 25
-    X_RES, Y_RES = 250, 250
+    X = 20
+    Y = 20
+    X_RES, Y_RES = 200, 200
     potentials = np.zeros((X_RES, Y_RES))
     # finding dimensions of a single pixel
     pixel_x = X / X_RES
     pixel_y = Y / Y_RES
+
+    # labels
+    ticks_x = []
+    ticks_y = []
+    # locations of ticks relative to pixels
+    tick_dimensions = np.arange(0, X_RES, X_RES / 10)
+
+    # offset = the amount the image is offset
+    x_offset = 10
+    y_offset = 10
+
+    # looping through and creating a list with each tick value, for ten total ticks.
+    # the tick amount is the same for every image, but the size between ticks differs
+    for tick in range(10):
+        ticks_x.append(tick * (X // 10) - x_offset)
+        ticks_y.append(tick * (Y // 10) - y_offset)
 
     for scan in range(scanAmt):
         which_scan = scan
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
         distance_to_scan = np.sqrt(
-                            (positions['platform_pos'][which_scan,0] - x_pos + 13)**2 + \
-                            (positions['platform_pos'][which_scan,1] - y_pos + 15)**2 + \
+                            (positions['platform_pos'][which_scan,0] - x_pos + x_offset)**2 + \
+                            (positions['platform_pos'][which_scan,1] - y_pos + y_offset)**2 + \
                             (positions['platform_pos'][which_scan,2])**2 
                             )
         times = 2 * distance_to_scan / 299792458 
@@ -131,21 +98,15 @@ def main():
         for i in range(Y_RES):
             for j in range(X_RES):
                 potentials[i,j] += data_array[which_scan, int(indexes[i,j])]
+
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
     print('time', time.time()-start_time)
-    '''
-    for scan in range(24):
-        for i in range(Y_RES):
-            for j in range(X_RES):
-                distance_to_scan = math.sqrt((positions['platform_pos'][scan*20,0] - i/40) **2 + (positions['platform_pos'][scan*20,1] - j/40)**2 + \
-                    (positions['platform_pos'][scan*20,2])**2)
-                #print(f'{i}, {j}, distance',distance_to_scan)
-                index = range_to_index(distance_to_scan) - 2786
-                #print(i)
-                if abs(index) > 699: continue
-                amplitude = data_array[scan*20, index]
-                potentials[i,j] += amplitude
-    '''
+    
+    plt.xlabel("Crossrange (m)")
+    plt.ylabel("Range (m)")
+
+    plt.xticks(tick_dimensions, ticks_x)
+    plt.yticks(tick_dimensions, ticks_y)
 
     plt.imshow(potentials, origin='lower', cmap='magma')
     plt.show()

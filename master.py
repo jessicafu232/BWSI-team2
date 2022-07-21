@@ -8,7 +8,7 @@ import glob
 import os
 
 scan_start = 0
-scan_end = 250000
+scan_end = 499998
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
