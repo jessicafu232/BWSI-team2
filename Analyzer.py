@@ -1,17 +1,27 @@
-from classes import scanAmt
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+#import matplotlib as mpl
 import numpy as np
 import pickle
+import json
 import math
 import glob
 import os
+import argparse 
 
+DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_DATA = './array_as_numpy.npy'
 
 def main():
     # 1) finding the range and cross range resolutions
-    data_array = np.load('array_as_numpy.npy')
-
+    parser = argparse.ArgumentParser(description="Analyse data")
+    parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of datafile')
+    parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
+    args = parser.parse_args()
+    data_array = np.load(args.datafile)
+    print(args)
+    with open(args.config, 'r') as f:
+        config = json.load(f)
+    print(config)
         # 1a) Getting the most recent platform positions file
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
@@ -26,9 +36,7 @@ def main():
 
     c = 299792458 #m/s
 
-    print(positions)
-
-    delta_pos = abs(positions['platform_pos'][0,0] - positions['platform_pos'][scanAmt - 1, 0])
+    delta_pos = abs(positions['platform_pos'][0,0] - positions['platform_pos'][config['Scan Amount'] - 1, 0])
     wavelength = c / (4.3 * 10**9)
     range_from_plane = math.sqrt((positions['platform_pos'][0,0])**2 + (positions['platform_pos'][0,1])**2 + \
         (positions['platform_pos'][0,2])**2)
@@ -41,14 +49,6 @@ def main():
 
     #np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
     # Will find out later what this is
-    time = 0
-    times = []
-
-    full_array = np.add(np.array(data_array[0], dtype=float), np.array(data_array[1], dtype=float), np.array(data_array[2], dtype=float))
-
-    for i in range(len(full_array)):
-        times += [time]
-        time += int(32 * 1.907)
 
     # 2) Using our Pixel Size, finding distance from each pixel to the platform, then using
     # this we calculate the time of the signal to send and come back. Then, knowing the delay 
@@ -59,9 +59,9 @@ def main():
     start_time = time.time()
 
     # dimensions of the original image (m)
-    X = 20
-    Y = 20
-    X_RES, Y_RES = 200, 200
+    X = config['X']
+    Y = config['Y']
+    X_RES, Y_RES = config['X_RES'], config['Y_RES']
     potentials = np.zeros((X_RES, Y_RES))
     # finding dimensions of a single pixel
     pixel_x = X / X_RES
@@ -74,8 +74,8 @@ def main():
     tick_dimensions = np.arange(0, X_RES, X_RES / 10)
 
     # offset = the amount the image is offset
-    x_offset = 10
-    y_offset = 10
+    x_offset = config['X_OFFSET']
+    y_offset = config['Y_OFFSET']
 
     # looping through and creating a list with each tick value, for ten total ticks.
     # the tick amount is the same for every image, but the size between ticks differs
@@ -83,8 +83,8 @@ def main():
         ticks_x.append(tick * (X // 10) - x_offset)
         ticks_y.append(tick * (Y // 10) - y_offset)
 
-    for scan in range(scanAmt):
-        which_scan = scan
+    for scan in range(config['Scan Amount'] // config['Skip']):
+        which_scan = scan * config['Skip']
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
         distance_to_scan = np.sqrt(

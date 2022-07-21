@@ -1,14 +1,20 @@
-from classes import Encoder, Decoder, PORT, SIZES, data_array, scanAmt
-import socket, struct
+from classes import Encoder, Decoder, PORT, SIZES, data_array
 import matplotlib.pyplot as plt
 import numpy as np
-import pickle
-import math
-import glob
-import os
+import json
+import sys
 
-scan_start = 0
-scan_end = 499998
+DEFAULT_CONFIG = './five_point_config.json'
+if len(sys.argv) == 2:
+    file = sys.argv[1]
+else:
+    file = DEFAULT_CONFIG
+with open(file, 'r') as f:
+    config = json.load(f)
+
+scan_start = config['Scan start']
+scan_end = config['Scan end']
+scanAmt = config['Scan Amount']
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
