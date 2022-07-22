@@ -8,7 +8,7 @@ import glob
 import os
 import argparse 
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = './array_as_numpy.npy'
 
 def main():
@@ -117,7 +117,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='magma')
+    plt.imshow(potentials, origin='lower', cmap='bone')
     plt.show()
 
 # I love basic radar eq

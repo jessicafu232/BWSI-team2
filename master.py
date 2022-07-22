@@ -4,7 +4,7 @@ import numpy as np
 import json
 import sys
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
@@ -92,7 +92,7 @@ ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
                 ['Message ID', 'UINT16', 35],
                 ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
-                ['Scan Interval Time', 'UINT32', 2000]
+                ['Scan Interval Time', 'UINT32', 0]
                 )
 
 DECODER36 = Decoder(['Settings Header', 'UINT16'],

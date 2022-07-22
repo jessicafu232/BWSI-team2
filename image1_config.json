@@ -1,0 +1,12 @@
+{
+    "Scan start": 0,
+    "Scan end": 300000,
+    "X": 5,
+    "Y": 5,
+    "X_RES": 200,
+    "Y_RES": 200,
+    "X_OFFSET": 2.5,
+    "Y_OFFSET": 2.5,
+    "Scan Amount": 500,
+    "Skip": 1
+}
