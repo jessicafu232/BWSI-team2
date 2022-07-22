@@ -6,7 +6,8 @@ import json
 import math
 import glob
 import os
-import argparse 
+import argparse
+from tqdm import tqdm
 
 DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = './array_as_numpy.npy'
@@ -85,7 +86,7 @@ def main():
         ticks_x.append(round(tick * (X / 10) - x_offset, 1))
         ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
 
-    for scan in range(config['Scan Amount'] // config['Skip']):
+    for scan in tqdm(range(config['Scan Amount'] // config['Skip'])):
         which_scan = scan * config['Skip']
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
@@ -104,7 +105,7 @@ def main():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-
+    #potentials = potentials * 5
     print(potentials)
 
 

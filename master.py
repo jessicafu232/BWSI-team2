@@ -15,6 +15,7 @@ with open(file, 'r') as f:
 scan_start = config['Scan start']
 scan_end = config['Scan end']
 scanAmt = config['Scan Amount']
+BII = config['Base Integration Index']
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    30],
