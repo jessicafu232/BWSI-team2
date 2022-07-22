@@ -105,7 +105,7 @@ def main():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-
+    #potentials = potentials * 5
     print(potentials)
 
 
