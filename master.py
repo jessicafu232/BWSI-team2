@@ -129,6 +129,7 @@ for r in range(scanAmt * num_of_msg):
     ENCODER_LIST.append(DECODER21)
 
 message_portion = []
+message_dict = {}
 
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
@@ -136,16 +137,27 @@ for e in ENCODER_LIST:
     elif isinstance(e, Decoder):
         message = e.receive_message(4096)
         if e is DECODER21:
-            #print(message)
-            if message['Message index'] < num_of_msg - 1:
-                for sn in message['Scan Data']:
-                    message_portion.append(sn)
-            else: # message index == # of total messages
-                for sn in message['Scan Data']:
-                    message_portion.append(sn)
-                data_array.append(message_portion)
-                #print(len(message_portion))
-                message_portion = []
+            message_dict[message['Message ID']] = message
+message_dict.sort()
+counter = list(my_dict)[0] - 1
+for y in message_dict: 
+    if y != counter + 1:
+        message_dict[counter + 1] = [0]*
+for x in message_dict.values():
+    if message['Message index'] < num_of_msg - 1:
+        for sn in message['Scan Data']:
+            message_portion.append(sn)
+    else: # message index == # of total messages
+        for sn in message['Scan Data']:
+            message_portion.append(sn)
+                           
+    data_array.append(message_portion)
+                        #print(len(message_portion))
+    message_portion = []
+        
+                
+
+
 
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
 
