@@ -139,6 +139,8 @@ for e in ENCODER_LIST:
         e.send_message()
     elif isinstance(e, Decoder):
         message = e.receive_message(4096)
+        if message is None:
+            break
         if e is DECODER21:
             if count == 1:
                 message_portion = [0] * message['Number of Samples total']
