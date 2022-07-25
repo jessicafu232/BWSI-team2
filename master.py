@@ -147,29 +147,42 @@ for e in ENCODER_LIST:
 
 all_msgs.sort(key=lambda x: x["Message ID"])
 all_ids = [x["Message ID"] for x in all_msgs]
-former_timestamp = 0
-current_timestamp = 0
-data = []
-current_scan = []
-counter = 0
+
+
 total_expected_packets = all_msgs[0]["Number of messages total"]
+print(total_expected_packets)
 print('excess', (max(all_ids) % total_expected_packets))
 missing_ids = set(range(max(all_ids))) - set(all_ids)
 missing_ids = missing_ids - set(range(36))
+# max(all_ids) does not care about dropped packet at the end
 print('Missing ids', missing_ids)
-'''
-for msg in all_msgs:
+former_timestamp = 0
+current_timestamp = 0
+data = []
+counter = 0
+current_scan = []
+from functools import reduce
+for i, msg in enumerate(all_msgs):
     current_timestamp = msg["Timestamp"]
     counter += 1
+    if counter in missing_ids:
+        # we want to append a list of 0s the same length as the corresponding data in the first scan (maybe bugged)
+        current_scan.append([0]*len(all_msgs[counter % total_expected_packets]["Scan Data"]))
+    else:
+        current_scan.append(msg["Scan Data"])
+    
     # check if we are on a new scan
     if current_timestamp != former_timestamp:
-        if counter != total_expected_packets:
-            ...
+        # crush the data into one list to represent scan
+        current_scan = reduce(lambda x, y: x + y, current_scan)
         data.append(current_scan)
         current_scan = []
-        counter = 0
 
     former_timestamp = current_timestamp
+print('data', data)
+'''
+for msg in all_msgs:
+    
 '''
 
 
