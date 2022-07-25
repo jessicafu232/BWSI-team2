@@ -119,7 +119,6 @@ class Decoder:
         #msg = "Message from Server {}".format(msgFromServer[0])
         message = self.decode(msgFromServer)
         #print("Message from Server: ", message)
-
         #checks the status to make sure its 0
         if message.get('Settings Header') != 61953:
             status = message['Status']
