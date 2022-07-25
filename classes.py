@@ -114,7 +114,11 @@ class Decoder:
 
     def receive_message(self, bufferSize=4096):
         #receives the message
-        msgFromServer = UDPClientSocket.recvfrom(bufferSize)
+        try:
+            msgFromServer = UDPClientSocket.recvfrom(bufferSize)
+        except socket.timeout:
+            return None
+
         msgFromServer = msgFromServer[0]
         #msg = "Message from Server {}".format(msgFromServer[0])
         message = self.decode(msgFromServer)
