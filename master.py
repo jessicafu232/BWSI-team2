@@ -117,7 +117,7 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Antenna ID', 'UINT8'],
                     ['Operational Mode', 'UINT8'],
                     ['Number of Samples in message', 'UINT16'],
-                    ['Number of samples total', 'UINT32'],
+                    ['Number of Samples total', 'UINT32'],
                     ['Message index', 'UINT16'],
                     ['Number of messages total', 'UINT16'],
                     ['Scan Data', 'INT32']
@@ -128,37 +128,48 @@ print("num of messages", num_of_msg)
 for r in range(scanAmt * num_of_msg):
     ENCODER_LIST.append(DECODER21)
 
-message_portion = []
-message_dict = {}
 
+#Creates empty zero list length of the entire message and fills the zeroes with appropriate
+#scanInfo according to messageID at the correct location. Sub messages that are dropped are 
+#left as zeroes. 
+message_portion = []
+count = 1
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
     elif isinstance(e, Decoder):
         message = e.receive_message(4096)
         if e is DECODER21:
-            message_dict[message['Message ID']] = message
-message_dict.sort()
-counter = list(my_dict)[0] - 1
-for y in message_dict: 
-    if y != counter + 1:
-        message_dict[counter + 1] = [0]*
-for x in message_dict.values():
-    if message['Message index'] < num_of_msg - 1:
-        for sn in message['Scan Data']:
-            message_portion.append(sn)
-    else: # message index == # of total messages
-        for sn in message['Scan Data']:
-            message_portion.append(sn)
-                           
-    data_array.append(message_portion)
-                        #print(len(message_portion))
-    message_portion = []
+            if count == 1:
+                message_portion = [0] * message['Number of Samples total']
+                maximum = message['Number of messages total']
+                offset = message['Message index'] * 350
+                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count += 1
+            if count == maximum + 1:
+                offset = message['Message index'] * 350
+                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count = 1
+                data_array.append(message_portion)
+                # print(message_portion)
+                message_portion = []
+            else: # message index is between 1 and the last index
+                offset = message['Message index'] * 350
+                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count += 1
+
+'''
+                for sn in message['Scan Data']:
+                    message_portion.append(sn)
+                data_array.append(message_portion) 
+                message_portion = []
+            
+
         
-                
+           #'num samples total'     
+'''
 
-
-
+#message_dict[message['Message ID']] = message
 np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
 
 '''
