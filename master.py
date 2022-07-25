@@ -131,6 +131,50 @@ for r in range(scanAmt * num_of_msg):
 #Creates empty zero list length of the entire message and fills the zeroes with appropriate
 #scanInfo according to messageID at the correct location. Sub messages that are dropped are 
 #left as zeroes. 
+
+#sacred
+all_msgs = []
+for e in ENCODER_LIST:
+    if isinstance(e, Encoder):
+        e.send_message()
+    elif isinstance(e, Decoder):
+        message = e.receive_message(4096)
+        if message is None:
+            print("Socket timed out a broke the loop")
+            break
+        if e is DECODER21:
+            all_msgs.append(message)
+
+all_msgs.sort(key=lambda x: x["Message ID"])
+all_ids = [x["Message ID"] for x in all_msgs]
+former_timestamp = 0
+current_timestamp = 0
+data = []
+current_scan = []
+counter = 0
+total_expected_packets = all_msgs[0]["Number of messages total"]
+print('excess', (max(all_ids) % total_expected_packets))
+missing_ids = set(range(max(all_ids))) - set(all_ids)
+missing_ids = missing_ids - set(range(36))
+print('Missing ids', missing_ids)
+'''
+for msg in all_msgs:
+    current_timestamp = msg["Timestamp"]
+    counter += 1
+    # check if we are on a new scan
+    if current_timestamp != former_timestamp:
+        if counter != total_expected_packets:
+            ...
+        data.append(current_scan)
+        current_scan = []
+        counter = 0
+
+    former_timestamp = current_timestamp
+'''
+
+
+
+'''
 message_portion = []
 count = 1
 for e in ENCODER_LIST:
@@ -159,7 +203,7 @@ for e in ENCODER_LIST:
                 message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
                 count += 1
 
-'''
+
                 for sn in message['Scan Data']:
                     message_portion.append(sn)
                 data_array.append(message_portion) 
