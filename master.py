@@ -182,11 +182,14 @@ for e in ENCODER_LIST:
             if message['Power-On BIT Test Result'] != 0:
                 #reboot the system if BIT error
                 print('BIT ERROR: REBOOTING SYSTEM...')
+                raise ValueError('BIT ERROR: REBOOT SYSTEM')
+                #not sure if reboot is implemented in the emulator yet, so raising an error for now
+                '''
                 ENCODER317.send_message()
                 message = DECODER318.receive_message()
+                '''
                 break
         elif e is DECODER21:
-            print(':)')
             if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
                 offset = message['Message index'] * 350
