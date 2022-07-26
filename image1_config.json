@@ -1,6 +1,7 @@
 {
     "Scan start": 0,
     "Scan end": 300000,
+    "Base Integration Index": 9,
     "X": 5,
     "Y": 5,
     "X_RES": 200,
