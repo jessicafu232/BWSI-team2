@@ -171,8 +171,6 @@ for r in range(scanAmt * num_of_msg):
 count = 0 # A helper Variable to set up everything
 firstID = 4 #The ID of the first scan info message received. Changes based on the number of Decoders are present in Encoder list. (#D + 1)
 
-
-
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
@@ -186,9 +184,8 @@ for e in ENCODER_LIST:
                 print('BIT ERROR: REBOOTING SYSTEM...')
                 ENCODER317.send_message()
                 message = DECODER318.receive_message()
-
-
-        if e is DECODER21:
+        elif e is DECODER21:
+            message = e.receive_message(4096)
             if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
                 offset = message['Message index'] * 350
