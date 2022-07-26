@@ -1,7 +1,3 @@
-from pyexpat.errors import messages
-from turtle import goto
-import socket, struct
-import numpy as np
 
 PORT = 21210
 scanAmt = 50
