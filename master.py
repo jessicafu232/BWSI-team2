@@ -134,17 +134,47 @@ for r in range(scanAmt * num_of_msg):
 #left as zeroes. 
 
 #sacred
-all_msgs = []
+
+count = 0 # A helper Variable to set up everything
+timeDelay = 69 #The calculated Delay between a set of scan messages
+firstTime = 0 #The first timestamp of the scans
+secondTime = -1 #The next set of scans timestamp
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
     elif isinstance(e, Decoder):
         message = e.receive_message(4096)
         if message is None:
-            print("Socket timed out a broke the loop")
             break
         if e is DECODER21:
-            all_msgs.append(message)
+            if count == 0: #Initialize 2D Array and set firstTime
+                finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
+                firstTime = message['Timestamp']
+                offset = message['Message index'] * 350
+                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count += 1
+            if message['Timestamp'] == firstTime: #filling first row since we do not know second timestamp
+                offset = message['Message index'] * 350
+                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+            if firstTime != message['Timestamp'] and count == 1: #Set second time when receiving the next timestamp
+                secondTime = message['Timestamp']
+                timeDelay = secondTime - firstTime
+                offset = message['Message index'] * 350
+                finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count += 1
+            else: # all other cases past first array and first scan of second array
+                offset = message['Message index'] * 350
+                finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+
+               
+
+
+#message_dict[message['Message ID']] = message
+np.save("array_as_numpy.npy", np.array(finalArray, dtype=float), allow_pickle=True)
+
+
+'''
+all_msgs.append(message)
 
 all_msgs.sort(key=lambda x: x["Message ID"])
 all_ids = [x["Message ID"] for x in all_msgs]
@@ -189,114 +219,4 @@ for i, msg in enumerate(all_msgs):
     
     counter += 1
     former_timestamp = current_timestamp
-
-'''
-for msg in all_msgs:
-    
-'''
-
-
-
-'''
-message_portion = []
-count = 1
-for e in ENCODER_LIST:
-    if isinstance(e, Encoder):
-        e.send_message()
-    elif isinstance(e, Decoder):
-        message = e.receive_message(4096)
-        if message is None:
-            break
-        if e is DECODER21:
-            if count == 1:
-                message_portion = [0] * message['Number of Samples total']
-                maximum = message['Number of messages total']
-                offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count += 1
-            if count == maximum + 1:
-                offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count = 1
-                data_array.append(message_portion)
-                # print(message_portion)
-                message_portion = []
-            else: # message index is between 1 and the last index
-                offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count += 1
-
-
-                for sn in message['Scan Data']:
-                    message_portion.append(sn)
-                data_array.append(message_portion) 
-                message_portion = []
-            
-        
-           #'num samples total'     
-'''
-
-#message_dict[message['Message ID']] = message
-
-np.save("array_as_numpy.npy", np.array(data, dtype=float), allow_pickle=True)
-
-'''
-print(data_array)
-
-list_of_files = glob.glob('../emulator/output/*')
-latest_file = max(list_of_files, key=os.path.getctime)
-print(latest_file)
-
-with open('..\\emulator\\output\\20220719T102027_5_point_scatter_platform_pos.pkl', 'rb') as f:
-    positions = pickle.load(f)
-
-c = 299792458 #m/s
-t = 0.017 * scanAmt # s
-
-print(positions)
-
-delta_pos = positions['platform_pos'][0,0] - positions['platform_pos'][scanAmt - 1,0]
-v = abs(delta_pos / t)
-wavelength = c / (4.3 * 10**9)
-range_from_plane = math.sqrt((positions['platform_pos'][0,0] - 10)**2 + (positions['platform_pos'][0,1] - 10)**2 + (positions['platform_pos'][0,2])**2)
-
-range_resolution = c / (2 * 1.1 * 10**9)
-cross_range_resolution = (wavelength * range_from_plane) / (2 * v * t)
-
-print(range_resolution)
-print(cross_range_resolution)
-
-
-np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
-
-time = 0
-times = []
-
-full_array = np.add(np.array(data_array[0], dtype=float), np.array(data_array[1], dtype=float), np.array(data_array[2], dtype=float))
-
-for i in range(len(full_array)):
-    times += [time]
-    time += int(32 * 1.907)
-
-
-
-plt.subplot(211)
-plt.plot(times, full_array)
-plt.xlabel('Time (ps)')
-plt.ylabel('Amplitude')
-
-
-time = 0
-times2 = []
-
-for i in range(len(data_array[1])):
-    times2 += [time]
-    time += int(32 * 1.907)
-
-plt.subplot(212)
-plt.plot(times2, data_array[1])
-plt.xlabel('Time (ps)')
-plt.ylabel('Amplitude')
-plt.show()
-
 '''
