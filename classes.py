@@ -25,7 +25,8 @@ STATUSES = {1: 'STATUS 1: GENERIC FAILURE',
             5: 'STATUS 5: WRONG MESSAGE SIZE',
             6: 'STATUS 6: NOT ENABLED',
             7: 'STATUS 7: WRONG BUFFER SIZE',
-            8: 'STATUS 8: UNRECOGNIZED MESSAGE TYPE'
+            8: 'STATUS 8: UNRECOGNIZED MESSAGE TYPE',
+            542458195: 'INTERNAL ERROR CODE'
 }   
 
 data_array = []
@@ -128,7 +129,7 @@ class Decoder:
         message = self.decode(msgFromServer)
         #print("Message from Server: ", message)
         #checks the status to make sure its 0
-        if message.get('Settings Header') != 61953:
+        if message.get('Settings Header') != 61953 and message.get('Settings Header') != 0xF101:
             status = message['Status']
             if status != 0:
                 raise ValueError('Message #' + str(message['Settings Header']) + ' ' + STATUSES[status])

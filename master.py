@@ -106,6 +106,36 @@ DECODER36 = Decoder(['Settings Header', 'UINT16'],
                 ['Status', 'UINT32']
                 )
 
+ENCODER315 = Encoder(['Settings Header', 'UINT16', 0xF001],
+                    ['Message ID', 'UINT16', 4])
+
+DECODER316 = Decoder(['Settings Header', 'UINT16'],
+                    ['Message ID', 'UINT16'],
+                    ['MRM Version Major', 'UINT8'],
+                    ['MRM Version Minor', 'UINT8'],
+                    ['MRM Version Build', 'UINT16'],
+                    ['UWB Kernel Major', 'UINT8'],
+                    ['UWB Kernel Minor', 'UINT8'],
+                    ['UWB Kernel Build', 'UINT16'],
+                    ['FPGA Firmware Version', 'UINT8'],
+                    ['FPGA Firmware Year', 'UINT8'],
+                    ['FPGA Firmware Month', 'UINT8'],
+                    ['FPGA Firmware Day', 'UINT8'],
+                    ['Serial Number', 'UINT32'],
+                    ['Board Revision', 'UINT8'],
+                    ['Power-On BIT Test Result', 'UINT8'],
+                    ['Board Type', 'UINT8'],
+                    ['Transmitter Configuration', 'UINT8'],
+                    ['Temperature', 'INT32'],
+                    ['Package Version', 'UINT32'],
+                    ['Status', 'UINT32'])
+
+ENCODER317 = Encoder(['Settings Header', 'UINT16', 0xF002],
+                    ['Message ID', 'UINT16', 4])
+
+DECODER318 = Decoder(['Settings Header', 'UINT16'],
+                    ['Message ID', 'UINT16'])
+
 DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Message ID', 'UINT16'],
                     ['Source ID', 'UINT32'],
@@ -130,13 +160,11 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
 
 
 # Creates a list of Encoders to send messages and Decoders to receive and interpret messages. Creates excess amount of DECORDER21, or Scan Info Decoders
-ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
+ENCODER_LIST = [ENCODER315, DECODER316, ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
 num_of_msg = int((scan_end - scan_start) // (61.024 * 350)) + 1
 print("radar") # Checks if master.py is running
 for r in range(scanAmt * num_of_msg):
     ENCODER_LIST.append(DECODER21)
-
-
 
 
 # First scan is at message id 4
@@ -145,17 +173,21 @@ firstID = 4 #The ID of the first scan info message received. Changes based on th
 
 
 
-# We create a 2d array (list of lists) with zeros. We use the Message ID to find out which scan the message is 
-# apart of which correlates to the row number in our 2d array, and we use the Message Index to find out where within
-# that array the actual scan information goes. We then replace the zeroes with the scan info knowing the 
-# location the scan data belongs
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
-    elif isinstance(e, Decoder):
+    else:
         message = e.receive_message(4096)
         if message is None: #When no more messages are received, break
             break
+        if e is DECODER316:
+            if message['Power-On BIT Test Result'] != 0:
+                #reboot the system if BIT error
+                print('BIT ERROR: REBOOTING SYSTEM...')
+                ENCODER317.send_message()
+                message = DECODER318.receive_message()
+
+
         if e is DECODER21:
             if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
@@ -164,7 +196,14 @@ for e in ENCODER_LIST:
                 count += 1
             else: # all other cases past first array and first scan of second array
                 offset = message['Message index'] * 350
-                finalArray[(message['Message ID'] - 4) // message['Number of messages total']][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                finalArray[(message['Message ID'] - 5) // message['Number of messages total']][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+
+
+# We create a 2d array (list of lists) with zeros. We use the Message ID to find out which scan the message is 
+# apart of which correlates to the row number in our 2d array, and we use the Message Index to find out where within
+# that array the actual scan information goes. We then replace the zeroes with the scan info knowing the 
+# location the scan data belongs
+
                 
                 
        
