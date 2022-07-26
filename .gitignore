@@ -5,3 +5,5 @@ offline_data_3.pkl
 offline_data_4.pkl
 array_as_numpy.npy
 *.pyc
+array_as_numpy.npy
+five_point_config.json
