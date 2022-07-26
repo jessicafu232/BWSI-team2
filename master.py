@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 import sys
+import itertools
 
 DEFAULT_CONFIG = './five_point_config.json'
 if len(sys.argv) == 2:
@@ -18,7 +19,7 @@ scanAmt = config['Scan Amount']
 BII = config['Base Integration Index']
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
-                ['Message ID',  'UINT16',    30],
+                ['Message ID',  'UINT16',    0],
                 ['uint8',       'UINT8',     69],
                 ['uint16',      'UINT16',    420],
                 ['uint32',      'UINT32',    69420],
@@ -40,7 +41,7 @@ DECODER = Decoder(
 )
 
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
-                ['Message ID', 'UINT16', 31],
+                ['Message ID', 'UINT16',   1],
                 ['Node ID', 'UINT32', 1],
                 ['Scan Start (ps)', 'INT32', scan_start],
                 ['Scan End (ps)', 'INT32', scan_end],
@@ -65,7 +66,7 @@ DECODER32 = Decoder(['Settings Header', 'UINT16'],
                 )
 
 ENCODER33 = Encoder(['Settings Header', 'UINT16', 0x1002],
-                    ['Message ID', 'UINT16', 33])
+                    ['Message ID', 'UINT16', 2])
 
 DECODER34 = Decoder(['Settings Header', 'UINT16'],
                 ['Message ID', 'UINT16'],
@@ -90,7 +91,7 @@ DECODER34 = Decoder(['Settings Header', 'UINT16'],
                 ['Status', 'UINT32'])
 
 ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
-                ['Message ID', 'UINT16', 35],
+                ['Message ID', 'UINT16', 3],
                 ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
                 ['Scan Interval Time', 'UINT32', 0]
@@ -131,7 +132,9 @@ for r in range(scanAmt * num_of_msg):
 #Creates empty zero list length of the entire message and fills the zeroes with appropriate
 #scanInfo according to messageID at the correct location. Sub messages that are dropped are 
 #left as zeroes. 
-message_portion = []
+
+#sacred
+
 count = 0 # A helper Variable to set up everything
 timeDelay = 69 #The calculated Delay between a set of scan messages
 firstTime = 0 #The first timestamp of the scans
@@ -162,81 +165,58 @@ for e in ENCODER_LIST:
             else: # all other cases past first array and first scan of second array
                 offset = message['Message index'] * 350
                 finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-'''
-                for sn in message['Scan Data']:
-                    message_portion.append(sn)
-                data_array.append(message_portion) 
-                message_portion = []
-            
-        
-           #'num samples total'     
 
+               
 
-           offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count += 1
-'''
 
 #message_dict[message['Message ID']] = message
 np.save("array_as_numpy.npy", np.array(finalArray, dtype=float), allow_pickle=True)
-#data_array
+
+
 '''
-print(data_array)
+all_msgs.append(message)
 
-list_of_files = glob.glob('../emulator/output/*')
-latest_file = max(list_of_files, key=os.path.getctime)
-print(latest_file)
-
-with open('..\\emulator\\output\\20220719T102027_5_point_scatter_platform_pos.pkl', 'rb') as f:
-    positions = pickle.load(f)
-
-c = 299792458 #m/s
-t = 0.017 * scanAmt # s
-
-print(positions)
-
-delta_pos = positions['platform_pos'][0,0] - positions['platform_pos'][scanAmt - 1,0]
-v = abs(delta_pos / t)
-wavelength = c / (4.3 * 10**9)
-range_from_plane = math.sqrt((positions['platform_pos'][0,0] - 10)**2 + (positions['platform_pos'][0,1] - 10)**2 + (positions['platform_pos'][0,2])**2)
-
-range_resolution = c / (2 * 1.1 * 10**9)
-cross_range_resolution = (wavelength * range_from_plane) / (2 * v * t)
-
-print(range_resolution)
-print(cross_range_resolution)
+all_msgs.sort(key=lambda x: x["Message ID"])
+all_ids = [x["Message ID"] for x in all_msgs]
 
 
-np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
+total_expected_packets = all_msgs[0]["Number of messages total"]
 
-time = 0
-times = []
+print(total_expected_packets)
+print('excess', (max(all_ids) % total_expected_packets))
+missing_ids = set(range(max(all_ids))) - set(all_ids)
+missing_ids = missing_ids - set(range(36))
+# max(all_ids) does not care about dropped packet at the end
+print('Missing ids', missing_ids)
+former_timestamp = 0
+current_timestamp = 0
+data = []
+counter = 3
+current_scan = []
+from functools import reduce
+for i, msg in enumerate(all_msgs):
+    
+    
+    if counter in missing_ids:
+        if counter % total_expected_packets == 0:
+            current_scan.append([0]*len(all_msgs[total_expected_packets - 1]["Scan Data"]))
+        else:
+        # we want to append a list of 0s the same length as the corresponding data in the first scan (maybe bugged)
+            current_scan.append([0]*350)
+    else:
+        current_scan.append(msg["Scan Data"])
+    
+    # check if we are on a new scan
+    if msg['Message index'] == total_expected_packets - 1:
+            
+        # current_scan = list(itertools.chain.from_iterable(current_scan))
+        # crush the data into one list to represent scan
 
-full_array = np.add(np.array(data_array[0], dtype=float), np.array(data_array[1], dtype=float), np.array(data_array[2], dtype=float))
-
-for i in range(len(full_array)):
-    times += [time]
-    time += int(32 * 1.907)
-
-
-
-plt.subplot(211)
-plt.plot(times, full_array)
-plt.xlabel('Time (ps)')
-plt.ylabel('Amplitude')
-
-
-time = 0
-times2 = []
-
-for i in range(len(data_array[1])):
-    times2 += [time]
-    time += int(32 * 1.907)
-
-plt.subplot(212)
-plt.plot(times2, data_array[1])
-plt.xlabel('Time (ps)')
-plt.ylabel('Amplitude')
-plt.show()
-
+        current_scan = reduce(lambda x, y: x + y, current_scan)
+        print(len(current_scan))
+        data.append(current_scan)
+        current_scan = []
+    
+    counter += 1
+    former_timestamp = current_timestamp
 '''
