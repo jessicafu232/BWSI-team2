@@ -33,7 +33,7 @@ serverAddressPort = ('localhost', PORT)
 bufferSize = 4096
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
-
+# Takes a Dictionary and converts it into bytearray to be sent to the emulator
 class Encoder:
     def __init__(self, *list):
         self.list = list
@@ -65,7 +65,7 @@ class Encoder:
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)
 
         return None
-
+#Recieves a message in the form of a bytearray from the emulator and converts it back to a readerable dictionary
 class Decoder:
     def __init__(self, *list):
         self.list = list
