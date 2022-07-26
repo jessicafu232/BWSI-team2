@@ -9,7 +9,7 @@ import os
 import argparse
 from tqdm import tqdm
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = './array_as_numpy.npy'
 
 def main():
@@ -105,7 +105,7 @@ def main():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-    #potentials = potentials * 5
+    potentials = potentials ** 3
     print(potentials)
 
 

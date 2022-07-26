@@ -5,7 +5,7 @@ import json
 import sys
 import itertools
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
@@ -136,8 +136,8 @@ for r in range(scanAmt * num_of_msg):
 #sacred
 
 count = 0 # A helper Variable to set up everything
-timeDelay = 69 #The calculated Delay between a set of scan messages
-firstTime = 0 #The first timestamp of the scans
+timeDelay = -1 #The calculated Delay between a set of scan messages
+firstTime = -1 #The first timestamp of the scans
 secondTime = -1 #The next set of scans timestamp
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
