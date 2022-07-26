@@ -1,3 +1,9 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import json
+import sys
+import itertools
+import socket
 
 PORT = 21210
 scanAmt = 50
@@ -36,6 +42,7 @@ class Encoder:
     '''Maybe some internal conversion to bytes? maybe a superclass to handle many messages in the future'''
     # this might be a stupid idea
     def convert_to_bytes(self):
+        '''converts the Encoder object into a byte array that we can send to the emulator'''
         bytes = bytearray()
         for x in self.list:
             size = SIZES[x[1]]
@@ -55,6 +62,7 @@ class Encoder:
         return bytes
 
     def send_message(self):
+        '''sends the byte array to the emulator'''
         #print('Sending: ', self.list)
 
         bytesToSend = self.convert_to_bytes()
@@ -128,14 +136,3 @@ class Decoder:
                 return message
         else:
             return message
-
-    '''
-    def store_scan_info(self, m):
-        stores the scan info in a data.txt file
-
-        data_array.append(m)
-        with open('data.txt', 'a') as f:
-                f.write(str(m))
-
-        return None
-    '''
