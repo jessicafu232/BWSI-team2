@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 import sys
+import itertools
 
 DEFAULT_CONFIG = './five_point_config.json'
 if len(sys.argv) == 2:
@@ -18,7 +19,7 @@ scanAmt = config['Scan Amount']
 BII = config['Base Integration Index']
 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
-                ['Message ID',  'UINT16',    30],
+                ['Message ID',  'UINT16',    0],
                 ['uint8',       'UINT8',     69],
                 ['uint16',      'UINT16',    420],
                 ['uint32',      'UINT32',    69420],
@@ -40,7 +41,7 @@ DECODER = Decoder(
 )
 
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
-                ['Message ID', 'UINT16', 31],
+                ['Message ID', 'UINT16',   1],
                 ['Node ID', 'UINT32', 1],
                 ['Scan Start (ps)', 'INT32', scan_start],
                 ['Scan End (ps)', 'INT32', scan_end],
@@ -65,7 +66,7 @@ DECODER32 = Decoder(['Settings Header', 'UINT16'],
                 )
 
 ENCODER33 = Encoder(['Settings Header', 'UINT16', 0x1002],
-                    ['Message ID', 'UINT16', 33])
+                    ['Message ID', 'UINT16', 2])
 
 DECODER34 = Decoder(['Settings Header', 'UINT16'],
                 ['Message ID', 'UINT16'],
@@ -90,7 +91,7 @@ DECODER34 = Decoder(['Settings Header', 'UINT16'],
                 ['Status', 'UINT32'])
 
 ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
-                ['Message ID', 'UINT16', 35],
+                ['Message ID', 'UINT16', 3],
                 ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
                 ['Scan Interval Time', 'UINT32', 0]
@@ -150,6 +151,7 @@ all_ids = [x["Message ID"] for x in all_msgs]
 
 
 total_expected_packets = all_msgs[0]["Number of messages total"]
+
 print(total_expected_packets)
 print('excess', (max(all_ids) % total_expected_packets))
 missing_ids = set(range(max(all_ids))) - set(all_ids)
@@ -159,27 +161,35 @@ print('Missing ids', missing_ids)
 former_timestamp = 0
 current_timestamp = 0
 data = []
-counter = 0
+counter = 3
 current_scan = []
 from functools import reduce
 for i, msg in enumerate(all_msgs):
-    current_timestamp = msg["Timestamp"]
-    counter += 1
+    
+    
     if counter in missing_ids:
+        if counter % total_expected_packets == 0:
+            current_scan.append([0]*len(all_msgs[total_expected_packets - 1]["Scan Data"]))
+        else:
         # we want to append a list of 0s the same length as the corresponding data in the first scan (maybe bugged)
-        current_scan.append([0]*len(all_msgs[counter % total_expected_packets]["Scan Data"]))
+            current_scan.append([0]*350)
     else:
         current_scan.append(msg["Scan Data"])
     
     # check if we are on a new scan
-    if current_timestamp != former_timestamp:
+    if msg['Message index'] == total_expected_packets - 1:
+            
+        # current_scan = list(itertools.chain.from_iterable(current_scan))
         # crush the data into one list to represent scan
+
         current_scan = reduce(lambda x, y: x + y, current_scan)
+        print(len(current_scan))
         data.append(current_scan)
         current_scan = []
-
+    
+    counter += 1
     former_timestamp = current_timestamp
-print('data', data)
+
 '''
 for msg in all_msgs:
     
@@ -227,7 +237,8 @@ for e in ENCODER_LIST:
 '''
 
 #message_dict[message['Message ID']] = message
-np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
+
+np.save("array_as_numpy.npy", np.array(data, dtype=float), allow_pickle=True)
 
 '''
 print(data_array)
