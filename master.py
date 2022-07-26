@@ -4,6 +4,8 @@ import numpy as np
 import json
 import sys
 import itertools
+#Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
+#Config file matches that of Analyzer.py
 
 DEFAULT_CONFIG = './image1_config.json'
 if len(sys.argv) == 2:
@@ -18,6 +20,8 @@ scan_end = config['Scan end']
 scanAmt = config['Scan Amount']
 BII = config['Base Integration Index']
 
+#Encoder and Decoder object definitions. ENCODER and DECODER are the CommChecks, while any Encoder or Decoder with numbers
+#after it represent the message corresponding with the API. For example DECODER21 represents Message 3.21 SCAN_INFO 
 ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['Message ID',  'UINT16',    0],
                 ['uint8',       'UINT8',     69],
@@ -28,16 +32,16 @@ ENCODER = Encoder(['Settings Header', 'UINT16', 0xfffe],
                 ['int32',       'INT32',     -69420]) 
 
 DECODER = Decoder(
-    ['Settings Header', 'UINT16' ]  ,
-    ['Message ID', 'UINT16' ]       ,
-    ['UINT8'     , 'UINT8'    ]     ,
-    ['UINT16'    , 'UINT16'   ]     ,
-    ['UINT32'    , 'UINT32'   ]     ,
-    ['INT8'      , 'INT8'     ]     ,
-    ['INT16'     , 'INT16'    ]     ,
-    ['INT32'     , 'INT32'    ]     ,
-    ['CHAR[15]'  , 'CHAR[15]' ]     ,
-    ['Status'    , 'UINT32' ]
+                ['Settings Header', 'UINT16' ],
+                ['Message ID', 'UINT16' ],
+                ['UINT8'     , 'UINT8'    ],
+                ['UINT16'    , 'UINT16'   ],
+                ['UINT32'    , 'UINT32'   ],
+                ['INT8'      , 'INT8'     ],
+                ['INT16'     , 'INT16'    ],
+                ['INT32'     , 'INT32'    ],
+                ['CHAR[15]'  , 'CHAR[15]' ],
+                ['Status'    , 'UINT32' ]
 )
 
 ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
@@ -123,31 +127,54 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     ['Number of messages total', 'UINT16'],
                     ['Scan Data', 'INT32']
                     )
+
+
+# Creates a list of Encoders to send messages and Decoders to receive and interpret messages. Creates excess amount of DECORDER21, or Scan Info Decoders
 ENCODER_LIST = [ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
 num_of_msg = int((scan_end - scan_start) // (61.024 * 350)) + 1
-print("num of messages", num_of_msg)
+print("radar") # Checks if master.py is running
 for r in range(scanAmt * num_of_msg):
     ENCODER_LIST.append(DECODER21)
 
-#Creates empty zero list length of the entire message and fills the zeroes with appropriate
-#scanInfo according to messageID at the correct location. Sub messages that are dropped are 
-#left as zeroes. 
 
-#sacred
 
+
+# First scan is at message id 4
 count = 0 # A helper Variable to set up everything
-timeDelay = -1 #The calculated Delay between a set of scan messages
-firstTime = -1 #The first timestamp of the scans
-secondTime = -1 #The next set of scans timestamp
+firstID = 4 #The ID of the first scan info message received. Changes based on the number of Decoders are present in Encoder list. (#D + 1)
+
+
+
+# We create a 2d array (list of lists) with zeros. We use the Message ID to find out which scan the message is 
+# apart of which correlates to the row number in our 2d array, and we use the Message Index to find out where within
+# that array the actual scan information goes. We then replace the zeroes with the scan info knowing the 
+# location the scan data belongs
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
     elif isinstance(e, Decoder):
         message = e.receive_message(4096)
-        if message is None:
+        if message is None: #When no more messages are received, break
             break
         if e is DECODER21:
             if count == 0: #Initialize 2D Array and set firstTime
+                finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
+                offset = message['Message index'] * 350
+                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count += 1
+            else: # all other cases past first array and first scan of second array
+                offset = message['Message index'] * 350
+                finalArray[(message['Message ID'] - 4) // message['Number of messages total']][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                
+                
+       
+
+#Saving File               
+np.save("array_as_numpy.npy", np.array(finalArray, dtype = float), allow_pickle = True)
+
+# Excess old code, ignore. 
+'''
+ if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
                 firstTime = message['Timestamp']
                 offset = message['Message index'] * 350
@@ -159,20 +186,16 @@ for e in ENCODER_LIST:
             if firstTime != message['Timestamp'] and count == 1: #Set second time when receiving the next timestamp
                 secondTime = message['Timestamp']
                 timeDelay = secondTime - firstTime
+                print(timeDelay)
                 offset = message['Message index'] * 350
-                finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                finalArray[round((message['Timestamp'] - firstTime) / timeDelay)][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
                 count += 1
+                print((message['Timestamp'] - firstTime) / timeDelay)
             else: # all other cases past first array and first scan of second array
                 offset = message['Message index'] * 350
-                finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-
-               
-
-
-#message_dict[message['Message ID']] = message
-np.save("array_as_numpy.npy", np.array(finalArray, dtype=float), allow_pickle=True)
-
-
+                print((message['Timestamp'] - firstTime) / timeDelay)
+                print(round((message['Timestamp'] - firstTime) / timeDelay))
+'''
 '''
 all_msgs.append(message)
 
