@@ -132,7 +132,10 @@ for r in range(scanAmt * num_of_msg):
 #scanInfo according to messageID at the correct location. Sub messages that are dropped are 
 #left as zeroes. 
 message_portion = []
-count = 1
+count = 0 # A helper Variable to set up everything
+timeDelay = 69 #The calculated Delay between a set of scan messages
+firstTime = 0 #The first timestamp of the scans
+secondTime = -1 #The next set of scans timestamp
 for e in ENCODER_LIST:
     if isinstance(e, Encoder):
         e.send_message()
@@ -141,24 +144,24 @@ for e in ENCODER_LIST:
         if message is None:
             break
         if e is DECODER21:
-            if count == 1:
-                message_portion = [0] * message['Number of Samples total']
-                maximum = message['Number of messages total']
+            if count == 0: #Initialize 2D Array and set firstTime
+                finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
+                firstTime = message['Timestamp']
                 offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
                 count += 1
-            if count == maximum + 1:
+            if message['Timestamp'] == firstTime: #filling first row since we do not know second timestamp
                 offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count = 1
-                data_array.append(message_portion)
-                # print(message_portion)
-                message_portion = []
-            else: # message index is between 1 and the last index
+                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+            if firstTime != message['Timestamp'] and count == 1: #Set second time when receiving the next timestamp
+                secondTime = message['Timestamp']
+                timeDelay = secondTime - firstTime
                 offset = message['Message index'] * 350
-                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
                 count += 1
-
+            else: # all other cases past first array and first scan of second array
+                offset = message['Message index'] * 350
+                finalArray[(message['Timestamp'] - firstTime) // timeDelay][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
 '''
                 for sn in message['Scan Data']:
                     message_portion.append(sn)
@@ -167,11 +170,16 @@ for e in ENCODER_LIST:
             
         
            #'num samples total'     
+
+
+           offset = message['Message index'] * 350
+                message_portion[offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
+                count += 1
 '''
 
 #message_dict[message['Message ID']] = message
-np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
-
+np.save("array_as_numpy.npy", np.array(finalArray, dtype=float), allow_pickle=True)
+#data_array
 '''
 print(data_array)
 
