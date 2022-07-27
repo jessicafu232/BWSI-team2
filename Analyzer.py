@@ -116,9 +116,7 @@ def main():
         times = 2 * distance_to_scan / 299792458 
         indexes = np.rint(times / 61.024e-12)
         indexes = np.minimum(indexes, data_array.shape[1] - 1)
-        for i in range(Y_RES):
-            for j in range(X_RES):
-                potentials[i,j] += abs(data_array[which_scan, int(indexes[i,j])])
+        potentials += np.abs(data_array[which_scan, indexes.astype(int)])
 
     minimum = np.min(potentials)
 
@@ -225,10 +223,7 @@ def main2():
         times = 2 * distance_to_scan / 299792458 
         indexes = np.rint(times / 61.024e-12)
         indexes = np.minimum(indexes, data_array.shape[1] - 1)
-        for i in range(Y_RES):
-            for j in range(X_RES):
-                potentials[i,j] += data_array[which_scan, int(indexes[i,j])]
-
+        potentials += np.abs(data_array[which_scan, indexes.astype(int)])
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
