@@ -37,7 +37,7 @@ def main():
     with open(args.config, 'r') as f:
         config = json.load(f)
 
-
+    contrast = config['Contrast']
     c = 299792458 #m/s
 
     delta_pos = abs(platform_pos[0,0] - platform_pos[data_array.shape[0] - 1, 0])
@@ -108,7 +108,7 @@ def main():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-    potentials = potentials ** 3
+    potentials = potentials ** contrast
     print(potentials)
 
 
@@ -217,7 +217,7 @@ def main2():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-    potentials = potentials ** 3
+    potentials = potentials ** config["Contrast"]
     print(potentials)
 
 
