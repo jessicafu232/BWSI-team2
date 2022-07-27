@@ -7,7 +7,7 @@ import itertools
 #Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
 #Config file matches that of Analyzer.py
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image4_config.json'
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
