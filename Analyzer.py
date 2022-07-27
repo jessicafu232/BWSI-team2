@@ -8,8 +8,9 @@ import glob
 import os
 import argparse
 from tqdm import tqdm
+import pandas
 
-DEFAULT_CONFIG = './image4_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = './array_as_numpy.npy'
 
 def main():
@@ -139,6 +140,7 @@ def main2():
 
     print(positions)
 
+    contrast = config['Contrast']
     c = 299792458 #m/s
 
     delta_pos = abs(positions['platform_pos'][0,0] - positions['platform_pos'][config['Scan Amount'] - 1, 0])
@@ -204,7 +206,7 @@ def main2():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-    potentials = potentials 
+    potentials = potentials ** contrast
     print(potentials)
 
 
@@ -230,4 +232,4 @@ def range_to_index(rng):
     return index
 
 if __name__ == '__main__':
-    main()
+    main2()

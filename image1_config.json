@@ -9,5 +9,6 @@
     "X_OFFSET": 2.5,
     "Y_OFFSET": 2.5,
     "Scan Amount": 250,
-    "Skip": 1
+    "Skip": 1,
+    "Contrast": 2
 }
