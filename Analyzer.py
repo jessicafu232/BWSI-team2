@@ -9,8 +9,8 @@ import argparse
 from tqdm import tqdm
 import pandas
 
-DEFAULT_CONFIG = './marathon_0_config.json'
-DEFAULT_DATA = 'marathon_0.json'
+DEFAULT_CONFIG = './image4_config.json'
+DEFAULT_DATA = 'array_as_numpy.npy'
 
 parser = argparse.ArgumentParser(description="Analyse data")
 parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of datafile')
@@ -25,8 +25,6 @@ def main():
     with open(args.config, 'r') as f:
         config = json.load(f)
     print(config)
-
-    
     
     if args.mode == 'yes':
         data_array = np.load(args.datafile)
@@ -46,6 +44,7 @@ def main():
         # 1b) Opening file, calculations for velocity, range from midpoint of plane,
         # range rez, crange rez 
 
+    contrast = config['Contrast']
     c = 299792458 #m/s
 
     delta_pos = abs(platform_pos[0,0] - platform_pos[scanAmt - 1, 0])
@@ -107,7 +106,7 @@ def main():
         times = 2 * distance_to_scan / 299792458 
         indexes = np.rint(times / 61.024e-12)
         indexes = np.minimum(indexes, data_array.shape[1] - 1)
-        potentials += np.abs(data_array[which_scan, indexes.astype(int)])
+        potentials += data_array[which_scan, indexes.astype(int)]
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
