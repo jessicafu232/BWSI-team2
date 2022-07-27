@@ -7,3 +7,5 @@ array_as_numpy.npy
 *.pyc
 venv/**
 cprintmoduledir/**
+array_as_numpy.npy
+five_point_config.json
