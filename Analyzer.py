@@ -22,46 +22,29 @@ args = parser.parse_args()
 
 def main():
     x= pandas.read_pickle(r'marathon_0.pkl')
-    print(x) 
 
     data_array = x['scan_data']
     platform_pos = x['platform_pos']
     range_bins = x['range_bins']
 
+    print('range_bins: ', range_bins)
+    print('length range_bins: ', len(range_bins))
+
+    data_array = np.abs(data_array)
+    print('data_array: ', data_array)
     
-    #data_array = np.load(args.datafile)
     print(args)
     with open(args.config, 'r') as f:
         config = json.load(f)
-    print(config)
-        # 1a) Getting the most recent platform positions file
-    list_of_files = glob.glob('../emulator/output/*')
-    latest_file = max(list_of_files, key=os.path.getctime)
-    print(latest_file)
 
-    # note: setting arbitrary values to test the next step
-
-        # 1b) Opening file, calculations for velocity, range from midpoint of plane,
-        # range rez, crange rez 
-    with open(latest_file, 'rb') as f:
-        positions = pickle.load(f)
-
-    print(positions)
-
+    contrast = config['Contrast']
     c = 299792458 #m/s
 
-    delta_pos = abs(platform_pos[0,0] - platform_pos[config['Scan Amount'] - 1, 0])
+    delta_pos = abs(platform_pos[0,0] - platform_pos[data_array.shape[0] - 1, 0])
     wavelength = c / (4.3 * 10**9)
     range_from_plane = math.sqrt((platform_pos[0,0])**2 + (platform_pos[0,1])**2 + \
         (platform_pos[0,2])**2)
     
-    #if using the emulator, use this instead
-    '''
-    delta_pos = abs(positions['platform_pos'][0,0] - positions['platform_pos'][config['Scan Amount'] - 1, 0])
-    wavelength = c / (4.3 * 10**9)
-    range_from_plane = math.sqrt((positions['platform_pos'][0,0])**2 + (positions['platform_pos'][0,1])**2 + \
-        (positions['platform_pos'][0,2])**2)'''
-
     range_resolution = c / (2 * 1.1 * 10**9)
     cross_range_resolution = (wavelength * range_from_plane) / (2 * delta_pos)
 
@@ -103,8 +86,10 @@ def main():
     for tick in range(10):
         ticks_x.append(round(tick * (X / 10) - x_offset, 1))
         ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
+    
+    print('data_array shape: ', data_array.shape)
 
-    for scan in tqdm(range(len(data_array) // config['Skip'])):
+    for scan in tqdm(range((data_array.shape[0]) // config['Skip'])):
         which_scan = scan * config['Skip']
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
@@ -121,7 +106,7 @@ def main():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-    potentials = potentials ** 3
+    potentials = potentials ** contrast
     print(potentials)
 
 
@@ -227,7 +212,7 @@ def main2():
     minimum = np.min(potentials)
 
     potentials = potentials + abs(minimum)
-    potentials = potentials ** 3
+    potentials = potentials ** config["Contrast"]
     print(potentials)
 
 

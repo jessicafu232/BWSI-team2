@@ -4,10 +4,11 @@ import numpy as np
 import json
 import sys
 import itertools
+from tqdm import tqdm
 #Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
 #Config file matches that of Analyzer.py
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image4_config.json'
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
@@ -171,7 +172,7 @@ for r in range(scanAmt * num_of_msg):
 count = 0 # A helper Variable to set up everything
 firstID = 4 #The ID of the first scan info message received. Changes based on the number of Decoders are present in Encoder list. (#D + 1)
 
-for e in ENCODER_LIST:
+for e in tqdm(ENCODER_LIST):
     if isinstance(e, Encoder):
         e.send_message()
     else:
@@ -189,7 +190,7 @@ for e in ENCODER_LIST:
                 message = DECODER318.receive_message()
                 '''
                 break
-        elif e is DECODER21:
+        if e is DECODER21:
             if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
                 offset = message['Message index'] * 350
