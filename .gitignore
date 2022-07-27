@@ -16,3 +16,4 @@ __pycache__/basic_radar_equation.cpython-310.pyc
 __pycache__/classes.cpython-310.pyc
 *.json
 *.pkl
+*.pyc
