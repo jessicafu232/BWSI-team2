@@ -108,7 +108,7 @@ def main():
         indexes = np.minimum(indexes, data_array.shape[1] - 1)
         potentials += data_array[which_scan, indexes.astype(int)]
     minimum = np.min(potentials)
-
+    if config.get('Contrast') is None: contrast = 1
     potentials = potentials + abs(minimum)
     potentials = potentials ** contrast
     print(potentials)
