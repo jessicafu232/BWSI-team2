@@ -182,10 +182,14 @@ for e in ENCODER_LIST:
             if message['Power-On BIT Test Result'] != 0:
                 #reboot the system if BIT error
                 print('BIT ERROR: REBOOTING SYSTEM...')
+                raise ValueError('BIT ERROR: REBOOT SYSTEM')
+                #not sure if reboot is implemented in the emulator yet, so raising an error for now
+                '''
                 ENCODER317.send_message()
                 message = DECODER318.receive_message()
+                '''
+                break
         elif e is DECODER21:
-            message = e.receive_message(4096)
             if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
                 offset = message['Message index'] * 350
@@ -200,10 +204,6 @@ for e in ENCODER_LIST:
 # apart of which correlates to the row number in our 2d array, and we use the Message Index to find out where within
 # that array the actual scan information goes. We then replace the zeroes with the scan info knowing the 
 # location the scan data belongs
-
-                
-                
-       
 
 #Saving File               
 np.save("array_as_numpy.npy", np.array(finalArray, dtype = float), allow_pickle = True)
