@@ -1,14 +1,14 @@
 {
     "Scan start": 0,
-    "Scan end": 499998,
+    "Scan end": 1500000,
     "Base Integration Index": 11,
-    "X": 60,
-    "Y": 60,
-    "X_RES": 300,
-    "Y_RES": 300,
-    "X_OFFSET": 120,
-    "Y_OFFSET": 30,
-    "Scan Amount": 3000,
+    "X": 70,
+    "Y": 70,
+    "X_RES": 600,
+    "Y_RES": 600,
+    "X_OFFSET": 125,
+    "Y_OFFSET": 35,
+    "Scan Amount": 600,
     "Skip": 1,
-    "Contrast": 1
+    "Contrast": 2
 }
