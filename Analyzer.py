@@ -123,7 +123,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='bone')
+    plt.imshow(potentials, origin='lower', cmap='cubehelix')
     plt.show()
 
 main()
