@@ -8,7 +8,6 @@ array_as_numpy.npy
 venv/**
 cprintmoduledir/**
 array_as_numpy.npy
-five_point_config.json
 __pycache__/basic_radar_equation.cpython-310.pyc
 marathon_0.pkl
 __pycache__/basic_radar_equation.cpython-310.pyc

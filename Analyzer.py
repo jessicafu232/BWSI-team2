@@ -9,7 +9,7 @@ import argparse
 from tqdm import tqdm
 import pandas
 
-DEFAULT_CONFIG = './image4_config.json'
+DEFAULT_CONFIG = './offline_data_2_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 parser = argparse.ArgumentParser(description="Analyse data")
@@ -123,7 +123,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='bone')
+    plt.imshow(potentials, origin='lower', cmap='cubehelix')
     plt.show()
 
 main()
