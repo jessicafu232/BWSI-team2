@@ -10,5 +10,7 @@
     "Y_OFFSET": 35,
     "Scan Amount": 600,
     "Skip": 1,
-    "Contrast": 2
+    "Contrast": 2,
+    "Transmit Gain": 63,
+    "Scan Interval": 0 
 }
