@@ -40,7 +40,6 @@ def main():
         data_array = x['scan_data']
         platform_pos = x['platform_pos']
         print(data_array.shape, platform_pos.shape)
-        data_array = np.abs(data_array)
         scanAmt = data_array.shape[0] 
         range_bins = x['range_bins']
 
@@ -79,7 +78,11 @@ def main():
     X = config['X']
     Y = config['Y']
     X_RES, Y_RES = config['X_RES'], config['Y_RES']
-    potentials = np.zeros((X_RES, Y_RES))
+    if args_mode == 'true':
+        potentials = np.zeros((X_RES, Y_RES)).astype(np.complex64)
+    else:
+        potentials = np.zeros((X_RES, Y_RES))
+
     # finding dimensions of a single pixel
     pixel_x = X / X_RES
     pixel_y = Y / Y_RES
@@ -114,12 +117,16 @@ def main():
             times = 2 * distance_to_scan / 299792458 
             indexes = np.rint(times / 61.024e-12)
         else:
-            start_time_no_emulator = 2 * range_bins[0] / 299792458
-            times = 2 * distance_to_scan / 299792458 - start_time_no_emulator
-            indexes = np.rint(times / 61.024e-12)
-
-
-
+            start_time_no_emulator = 2 * np.min(range_bins) / 299792458
+            end_scan = 2 * np.max(range_bins) / 299792458
+            #print("start scan", start_time_no_emulator * 10**12, "end scan", end_scan * 10**12)
+            times = (2 * distance_to_scan / 299792458) - start_time_no_emulator
+            #print("last one calc", times[0][-1] * 10**12, "last one hypo", (end_scan - start_time_no_emulator) * 10**12)
+            #print("diff", ((end_scan - start_time_no_emulator) * 10**12) / len(range_bins))
+            diff = (end_scan - start_time_no_emulator) / len(range_bins)
+            indexes = np.rint(times / diff)
+            
+            
             '''
             # matching the distance_to_scan values with the range_bins value
             index_sorted = np.argsort(range_bins)
@@ -152,6 +159,7 @@ def main():
     potentials = potentials + abs(minimum)
     potentials = potentials ** contrast
     print(potentials)
+    potentials = np.abs(potentials)
 
 
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
@@ -163,7 +171,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='wistia')
+    plt.imshow(potentials, origin='lower', cmap='magma')
     plt.show()
 
 main()
