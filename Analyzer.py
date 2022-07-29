@@ -121,8 +121,6 @@ def main():
             end_scan = 2 * np.max(range_bins) / 299792458
             #print("start scan", start_time_no_emulator * 10**12, "end scan", end_scan * 10**12)
             times = (2 * distance_to_scan / 299792458) - start_time_no_emulator
-            #print("last one calc", times[0][-1] * 10**12, "last one hypo", (end_scan - start_time_no_emulator) * 10**12)
-            #print("diff", ((end_scan - start_time_no_emulator) * 10**12) / len(range_bins))
             diff = (end_scan - start_time_no_emulator) / len(range_bins)
             indexes = np.rint(times / diff)
             
@@ -173,5 +171,6 @@ def main():
     plt.imshow(potentials, origin='lower', cmap='magma')
     plt.colorbar()
     plt.show()
-
-main()
+    
+if __name__ == '__main__':
+    main()
