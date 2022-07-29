@@ -126,7 +126,6 @@ def main():
             diff = (end_scan - start_time_no_emulator) / len(range_bins)
             indexes = np.rint(times / diff)
             
-            
             '''
             # matching the distance_to_scan values with the range_bins value
             index_sorted = np.argsort(range_bins)
@@ -172,6 +171,7 @@ def main():
     plt.yticks(tick_dimensions, ticks_y)
 
     plt.imshow(potentials, origin='lower', cmap='magma')
+    plt.colorbar()
     plt.show()
 
 main()
