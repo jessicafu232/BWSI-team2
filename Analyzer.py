@@ -78,7 +78,7 @@ def main():
     X = config['X']
     Y = config['Y']
     X_RES, Y_RES = config['X_RES'], config['Y_RES']
-    if args_mode == 'true':
+    if args.mode == 'true':
         potentials = np.zeros((X_RES, Y_RES)).astype(np.complex64)
     else:
         potentials = np.zeros((X_RES, Y_RES))
@@ -103,8 +103,11 @@ def main():
         ticks_x.append(round(tick * (X / 10) - x_offset, 1))
         ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
 
+    tdct = 0
+
     for scan in tqdm(range(scanAmt // config['Skip'])):
         which_scan = scan * config['Skip']
+        dcst = time.time() # distance calculation start time
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
         distance_to_scan = np.sqrt(
@@ -112,6 +115,7 @@ def main():
                             (platform_pos[which_scan,1] - y_pos + y_offset)**2 + \
                             (platform_pos[which_scan,2])**2 
                             )
+        tdct += time.time() - dcst # total distance calculation time
 
         if args.mode == 'true':
             times = 2 * distance_to_scan / 299792458 
@@ -160,8 +164,8 @@ def main():
 
 
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
-    print('time', time.time()-start_time)
-    
+    print('total time', time.time()-start_time)
+    print('time spent calculating distances', tdct, 'sec - ', tdct/(time.time()-start_time) * 100, '%')
     plt.xlabel("Crossrange (m)")
     plt.ylabel("Range (m)")
 
@@ -171,6 +175,6 @@ def main():
     plt.imshow(potentials, origin='lower', cmap='magma')
     plt.colorbar()
     plt.show()
-    
+
 if __name__ == '__main__':
     main()
