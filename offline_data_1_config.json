@@ -9,5 +9,7 @@
     "X_OFFSET": 10,
     "Y_OFFSET": 10,
     "Scan Amount": 250,
-    "Skip": 1
+    "Skip": 1,
+    "Transmit Gain": 63,
+    "Scan Interval": 0 
 }
