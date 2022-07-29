@@ -100,8 +100,11 @@ def main():
         ticks_x.append(round(tick * (X / 10) - x_offset, 1))
         ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
 
+    tdct = 0
+
     for scan in tqdm(range(scanAmt // config['Skip'])):
         which_scan = scan * config['Skip']
+        dcst = time.time() # distance calculation start time
         x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
         y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
         distance_to_scan = np.sqrt(
@@ -109,6 +112,7 @@ def main():
                             (platform_pos[which_scan,1] - y_pos + y_offset)**2 + \
                             (platform_pos[which_scan,2])**2 
                             )
+        tdct += time.time() - dcst # total distance calculation time
 
         if args.mode == 'true':
             times = 2 * distance_to_scan / 299792458 
@@ -118,8 +122,6 @@ def main():
             end_scan = 2 * np.max(range_bins) / 299792458
             #print("start scan", start_time_no_emulator * 10**12, "end scan", end_scan * 10**12)
             times = (2 * distance_to_scan / 299792458) - start_time_no_emulator
-            #print("last one calc", times[0][-1] * 10**12, "last one hypo", (end_scan - start_time_no_emulator) * 10**12)
-            #print("diff", ((end_scan - start_time_no_emulator) * 10**12) / len(range_bins))
             diff = (end_scan - start_time_no_emulator) / len(range_bins)
             indexes = np.rint(times / diff)
             
@@ -162,8 +164,8 @@ def main():
 
 
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
-    print('time', time.time()-start_time)
-    
+    print('total time', time.time()-start_time)
+    print('time spent calculating distances', tdct, 'sec - ', tdct/(time.time()-start_time) * 100, '%')
     plt.xlabel("Crossrange (m)")
     plt.ylabel("Range (m)")
 
@@ -174,4 +176,5 @@ def main():
     plt.colorbar()
     plt.show()
 
-main()
+if __name__ == '__main__':
+    main()
