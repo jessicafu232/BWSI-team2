@@ -1,10 +1,10 @@
 {
-    "X": 100,
-    "Y": 100,
+    "X": 200,
+    "Y": 200,
     "X_RES": 400,
     "Y_RES": 400,
-    "X_OFFSET": 185,
-    "Y_OFFSET": 155,
-    "Skip": 1,
+    "X_OFFSET": 250,
+    "Y_OFFSET": 225,
+    "Skip": 10,
     "Contrast": 4
 }

@@ -15,7 +15,7 @@ DEFAULT_DATA = 'array_as_numpy.npy'
 parser = argparse.ArgumentParser(description="Analyse data")
 parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of datafile')
 parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
-parser.add_argument("--mode", '-em', default='yes', help='Run a file through emulator, true or false')
+parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
 args = parser.parse_args()
 
 
@@ -26,18 +26,24 @@ def main():
         config = json.load(f)
     print(config)
     
-    if args.mode == 'yes':
+    if args.mode == 'true':
+        print("Running emulator data!!!")
         data_array = np.load(args.datafile)
         with open(latest_file, 'rb') as f:
             positions = pickle.load(f)
         platform_pos = positions['platform_pos']
         scanAmt= config['Scan Amount']
     else:
-        x= pandas.read_pickle(r'marathon_0.pkl')
+        print("Running non-emulator data!!!")
+        x = pandas.read_pickle(r'marathon_0.pkl')
+        print(x)
         data_array = x['scan_data']
         platform_pos = x['platform_pos']
-        data_array = np.abs(data_array)    
-        scanAmt = data_array.shape[0]                          
+        print(data_array.shape, platform_pos.shape)
+        data_array = np.abs(data_array)
+        scanAmt = data_array.shape[0] 
+        range_bins = x['range_bins']
+
 
     # note: setting arbitrary values to test the next step
 
@@ -103,8 +109,42 @@ def main():
                             (platform_pos[which_scan,1] - y_pos + y_offset)**2 + \
                             (platform_pos[which_scan,2])**2 
                             )
-        times = 2 * distance_to_scan / 299792458 
-        indexes = np.rint(times / 61.024e-12)
+
+        if args.mode == 'true':
+            times = 2 * distance_to_scan / 299792458 
+            indexes = np.rint(times / 61.024e-12)
+        else:
+            start_time_no_emulator = 2 * range_bins[0] / 299792458
+            times = 2 * distance_to_scan / 299792458 - start_time_no_emulator
+            indexes = np.rint(times / 61.024e-12)
+
+
+
+            '''
+            # matching the distance_to_scan values with the range_bins value
+            index_sorted = np.argsort(range_bins)
+            range_bins_sorted = range_bins[index_sorted]
+            idx1 = np.searchsorted(range_bins_sorted, distance_to_scan)
+            idx2 = np.clip(idx1 - 1, 0, len(range_bins_sorted) - 1)
+
+            diff1 = range_bins_sorted[idx1] - distance_to_scan
+            diff2 = distance_to_scan - range_bins_sorted[idx2]
+
+            # indexes of the closest range_bins value to each pixel.
+            # using this index we can figure out which amplitude is the best for every pixel
+            # b/c its distance is the most similar
+            indexes = index_sorted[np.where(diff1 <= diff2, idx1, idx2)]
+            residual = distance_to_scan - range_bins[indexes]
+            # print(residual)
+            '''
+            '''
+            for i in range(Y_RES):
+                for j in range(X_RES):
+                    ci = np.argmin(np.abs(range_bins - distance_to_scan[i,j]))
+                    potentials[i,j] += data_array[which_scan, ci]
+            '''
+            
+        
         indexes = np.minimum(indexes, data_array.shape[1] - 1)
         potentials += data_array[which_scan, indexes.astype(int)]
     minimum = np.min(potentials)
@@ -123,7 +163,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='cubehelix')
+    plt.imshow(potentials, origin='lower', cmap='wistia')
     plt.show()
 
 main()
