@@ -78,10 +78,7 @@ def main():
     X = config['X']
     Y = config['Y']
     X_RES, Y_RES = config['X_RES'], config['Y_RES']
-    if args_mode == 'true':
-        potentials = np.zeros((X_RES, Y_RES)).astype(np.complex64)
-    else:
-        potentials = np.zeros((X_RES, Y_RES))
+    potentials = np.zeros((X_RES, Y_RES)).astype(data_array.dtype)
 
     # finding dimensions of a single pixel
     pixel_x = X / X_RES
@@ -155,8 +152,11 @@ def main():
         potentials += data_array[which_scan, indexes.astype(int)]
     minimum = np.min(potentials)
     if config.get('Contrast') is None: contrast = 1
-    potentials = potentials + abs(minimum)
-    potentials = potentials ** contrast
+
+    # checking if there are complex numbers, if so then skipping the contrast, if not then running contrast 
+    if not np.iscomplexobj(potentials):
+        potentials = potentials + abs(minimum)
+        potentials = potentials ** contrast
     print(potentials)
     potentials = np.abs(potentials)
 
@@ -170,7 +170,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='magma')
+    plt.imshow(potentials, origin='lower', cmap='copper')
     plt.colorbar()
     plt.show()
 
