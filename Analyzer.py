@@ -114,7 +114,7 @@ def main():
             times = 2 * distance_to_scan / 299792458 
             indexes = np.rint(times / 61.024e-12)
         else:
-            start_time_no_emulator = 2 * range_bins[0] / 299792458
+            start_time_no_emulator = 2 * np.min(range_bins) / 299792458
             times = 2 * distance_to_scan / 299792458 - start_time_no_emulator
             indexes = np.rint(times / 61.024e-12)
 
@@ -163,7 +163,8 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='wistia')
+    plt.imshow(potentials, origin='lower', cmap='magma')
+    plt.colorbar()
     plt.show()
 
 main()
