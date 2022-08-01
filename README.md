@@ -37,8 +37,15 @@ Analyer Type Config Files are used when directly running the Analyzer.py. Has le
 4. **Skip** - Defines the interval of scans that will be skipped over. 
 5. **Contrast Value** - Increasing this value increases the contrast by taking all of the amplitudes in the pixel and raising it to the Contrast Value. A Contrast Value of 1 is the default Contrast. 
 
-
-
+## Running Analyzer.py
+The analyzer program has a few arguments/parameters for analyzing data.
+`--datafile`, `-df`
+* Location of a datafile to analyze the data of (i.e. ../team2/array_to_numpy.npy)
+`--config`, `-c`
+* Location of a config file (i.e. ../marathon_0_config.json)
+`--mode`, `-em`
+* Whether or not the file is run through the emulator.
+  * Default is `true`, can be set to `true` or `false`
 
 
 Team 2: 
