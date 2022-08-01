@@ -1,4 +1,4 @@
-# **Team Two UAS-SAR Code Instructions**
+# **Team Two UAS-SAR User Guide and Instructions**
 Written by Team 2
 
 # **Overview**
