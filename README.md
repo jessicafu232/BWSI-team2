@@ -4,7 +4,7 @@ Written by Team 2
 # **Overview**
 There are 3 main parts to operating our system. The Analyzer.py file, the master.py file, and Configuration Files. The Analyzer.py file takes raw data and implements backprojection and plots an image. The master.py file comunicates with the Emulator to generate and store raw scan information into a numpy file to be analyzed by Analyzer.py. Configuration Files define parameters for image formation and emulator configuration. 
 
-When running pickle files that directly store raw information. Define the pickle file, and run the Analyzer directly. When running the Emulator, first start the emulator (refer to the Emulator README) and then run master.py: This will automatically run and store raw scan data. 
+When running pickle files that directly store raw information, define the pickle file within the Analyzer file, and run the Analyzer directly. When running the Emulator, first start the emulator (refer to the Emulator README) and then run master.py: This will automatically run and store raw scan data. Afterwards, run the Analyzer file. 
 
 
 # **The master file**
