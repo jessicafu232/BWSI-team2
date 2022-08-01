@@ -1,4 +1,31 @@
-Run emulator 5 point scatter pkl file, then run master.py when emulator is ready to open requests, then finally run Analyzer.py after all messages have been sent.
+# **Team Two UAS-SAR Code Instructions**
+
+## Configuration Files
+**Configuration Files contain crucial information to both Receive and Analyze Data. Make sure that both the Emulator and the Analyzer refer to the same file. There are two types of Config Files: One used when using the Emulator, and one used when directly reading off of a pickle file**
+1.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # team2
