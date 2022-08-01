@@ -9,7 +9,7 @@ import argparse
 from tqdm import tqdm
 import pandas
 
-DEFAULT_CONFIG = './image1_config.json'
+DEFAULT_CONFIG = './five_point_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 parser = argparse.ArgumentParser(description="Analyse data")
