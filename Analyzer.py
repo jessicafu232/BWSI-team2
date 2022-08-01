@@ -18,6 +18,7 @@ parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of 
 parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
 args = parser.parse_args()
 
+colormap = 'magma'
 
 def main():
     list_of_files = glob.glob('../emulator/output/*')
@@ -174,7 +175,7 @@ def main():
     plt.xticks(tick_dimensions, ticks_x)
     plt.yticks(tick_dimensions, ticks_y)
 
-    plt.imshow(potentials, origin='lower', cmap='copper')
+    plt.imshow(potentials, origin='lower', cmap=colormap)
     plt.colorbar()
     plt.show()
 
