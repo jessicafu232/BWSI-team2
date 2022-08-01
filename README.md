@@ -34,7 +34,7 @@ Analyer Type Config Files are used when directly running the Analyzer.py. Has le
 1. **X and Y Values** - Defines the size of the image created. The image will be set to X meters by Y meters, where (0, 0) is the bottom left corner. The larger the X and Y values are, the more "zoomed out" the image will be.
 2. **X_RES and Y_RES Values** - Defines the number of pixel the image will have. Forms a X_RES by Y_RES pixel image. Increasing these values increase resolution. 
 3. **X_OFFSET and Y_OFFSET Values** - Defines the shift of the Axis in the image. The X_OFFSET value will shift the X-Axis by X_OFFSET meters to the left. The Y_OFFSET value will shift the Y-Axis Y_OFFSET meters down. These values help focus on the image. 
-4. **Skip** - Defines the number of scans that will be skipped over. 
+4. **Skip** - Defines the interval of scans that will be skipped over. 
 5. **Contrast Value** - Increasing this value increases the contrast by taking all of the amplitudes in the pixel and raising it to the Contrast Value. A Contrast Value of 1 is the default Contrast. 
 
 
@@ -42,6 +42,7 @@ Analyer Type Config Files are used when directly running the Analyzer.py. Has le
 
 
 Team 2: 
+
 Ty  
 Tanush  
 Jessica  
