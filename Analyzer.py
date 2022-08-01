@@ -101,12 +101,14 @@ def main():
         ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
 
     tdct = 0
+    
+    x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
+    y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
 
     for scan in tqdm(range(scanAmt // config['Skip'])):
         which_scan = scan * config['Skip']
         dcst = time.time() # distance calculation start time
-        x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
-        y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
+        
         distance_to_scan = np.sqrt(
                             (platform_pos[which_scan,0] - x_pos + x_offset)**2 + \
                             (platform_pos[which_scan,1] - y_pos + y_offset)**2 + \
