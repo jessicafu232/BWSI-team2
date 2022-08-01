@@ -53,7 +53,7 @@ There are also a few other parameters that can affect image rendering, such as `
 
 Here is an example of an image that might be plotted by the Analyzer.py file:
 
-![Image](https://cdn.discordapp.com/attachments/772273782001238030/1000070301079580853/unknown.png)
+![Image](https://cdn.discordapp.com/attachments/772273782001238030/1002627447054929992/unknown.png)
 
 # **Configuration Files**
 Configuration Files are a `.json` filetype containing a dictionary of information that is crucial to both Receive and Analyze Data. When forming images, modify these values to increase contrast, refocus the image, or increase resolution.
