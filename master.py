@@ -5,10 +5,11 @@ import json
 import sys
 import itertools
 from tqdm import tqdm
+import time
 #Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
 #Config file matches that of Analyzer.py
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
@@ -185,13 +186,14 @@ for e in tqdm(ENCODER_LIST):
             if message['Power-On BIT Test Result'] != 0:
                 #reboot the system if BIT error
                 print('BIT ERROR: REBOOTING SYSTEM...')
-                raise ValueError('BIT ERROR: REBOOT SYSTEM')
-                #not sure if reboot is implemented in the emulator yet, so raising an error for now
-                '''
                 ENCODER317.send_message()
-                message = DECODER318.receive_message()
-                '''
-                break
+                DECODER318.receive_message()
+                time.sleep(3)
+                ENCODER315.send_message()
+                message2 = DECODER316.receive_message(4096)
+                if message2['Power-On BIT Test Result'] != 0:
+                    raise ValueError('ERROR: TWO BIT ERRORS IN A ROW')
+                
         if e is DECODER21:
             if count == 0: #Initialize 2D Array and set firstTime
                 finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
