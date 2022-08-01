@@ -21,7 +21,7 @@ scan_start = config['Scan start']
 scan_end = config['Scan end']
 scanAmt = config['Scan Amount']
 BII = config['Base Integration Index']
-transmitGain = config['Transmig Gain']
+transmitGain = config['Transmit Gain']
 scanInterval = config['Scan Interval']
 
 #Encoder and Decoder object definitions. ENCODER and DECODER are the CommChecks, while any Encoder or Decoder with numbers
@@ -180,8 +180,11 @@ for e in tqdm(ENCODER_LIST):
         e.send_message()
     else:
         message = e.receive_message(4096)
+        if message is None and e is not DECODER21:
+            continue
         if message is None: #When no more messages are received, break
             break
+
         if e is DECODER316:
             if message['Power-On BIT Test Result'] != 0:
                 #reboot the system if BIT error
@@ -203,8 +206,6 @@ for e in tqdm(ENCODER_LIST):
             else: # all other cases past first array and first scan of second array
                 offset = message['Message index'] * 350
                 finalArray[(message['Message ID'] - 5) // message['Number of messages total']][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-
-
 # We create a 2d array (list of lists) with zeros. We use the Message ID to find out which scan the message is 
 # apart of which correlates to the row number in our 2d array, and we use the Message Index to find out where within
 # that array the actual scan information goes. We then replace the zeroes with the scan info knowing the 
