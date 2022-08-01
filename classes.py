@@ -83,6 +83,7 @@ class Decoder:
         start = 0
         recievedData = {}
         data = []
+
         for i, sz in enumerate([x[1] for x in self.list]):
             end = start + SIZES[sz] 
             if sz == 'CHAR[15]':
@@ -115,6 +116,7 @@ class Decoder:
             temp_dict = {self.list[i][0]:temp_byte}
             recievedData.update(temp_dict)
             start = end
+
         return recievedData
 
     def receive_message(self, bufferSize=4096):
