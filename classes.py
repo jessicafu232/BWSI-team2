@@ -31,7 +31,7 @@ STATUSES = {1: 'STATUS 1: GENERIC FAILURE',
 
 data_array = []
 
-TIMEOUT = 10
+TIMEOUT = 5
 serverAddressPort = ('localhost', PORT)
 bufferSize = 4096
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
