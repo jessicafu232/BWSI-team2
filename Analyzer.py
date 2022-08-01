@@ -19,7 +19,7 @@ parser.add_argument("--mode", '-em', default='true', help='Run a file through em
 args = parser.parse_args()
 
 colormap = 'magma'
-
+non_emulator_file = 'marathon_0.pkl'
 def main():
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
@@ -36,7 +36,7 @@ def main():
         scanAmt= config['Scan Amount']
     else:
         print("Running non-emulator data!!!")
-        x = pandas.read_pickle(r'marathon_0.pkl')
+        x = pandas.read_pickle(non_emulator_file)
         print(x)
         data_array = x['scan_data']
         platform_pos = x['platform_pos']
