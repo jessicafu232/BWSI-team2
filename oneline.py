@@ -1,0 +1,3 @@
+import numpy as np
+'''THE GLORIOUS ONE LINE'''
+image = data_array[np.mgrid[0:scanAmt, 0:Y_RES, 0:X_RES][0].astype(np.uint16), np.minimum(np.rint(2 * np.sqrt((platform_pos[np.mgrid[0:scanAmt, 0:Y_RES, 0:X_RES][0].astype(np.uint16),0] - np.mgrid[0:scanAmt, 0:Y_RES, 0:X_RES][1:].astype(np.uint16)[0] * X / X_RES + x_offset)**2 + (platform_pos[np.mgrid[0:scanAmt, 0:Y_RES, 0:X_RES][0].astype(np.uint16),1] - np.mgrid[0:scanAmt, 0:Y_RES, 0:X_RES][1:].astype(np.uint16)[1] * Y / Y_RES + y_offset)**2 + (platform_pos[np.mgrid[0:scanAmt, 0:Y_RES, 0:X_RES][0].astype(np.uint16),2])**2 ) / 299792458 / 61.024e-12), data_array.shape[1] - 1)]

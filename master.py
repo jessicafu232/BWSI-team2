@@ -21,6 +21,8 @@ scan_start = config['Scan start']
 scan_end = config['Scan end']
 scanAmt = config['Scan Amount']
 BII = config['Base Integration Index']
+transmitGain = config['Transmig Gain']
+scanInterval = config['Scan Interval']
 
 #Encoder and Decoder object definitions. ENCODER and DECODER are the CommChecks, while any Encoder or Decoder with numbers
 #after it represent the message corresponding with the API. For example DECODER21 represents Message 3.21 SCAN_INFO 
@@ -62,7 +64,7 @@ ENCODER31 = Encoder(['Settings Header', 'UINT16', 0x1001],
                 ['Segment 3 Integration Multiple', 'UINT8', 3],
                 ['Segment 4 Integration Multiple', 'UINT8', 4],
                 ['Antenna Mode', 'UINT8', 2],
-                ['Transmit Gain', 'UINT8', 63],
+                ['Transmit Gain', 'UINT8', transmitGain],
                 ['Code Channel', 'UINT8', 0],
                 ['Persist Flag', 'UINT8', 0])
 
@@ -100,7 +102,7 @@ ENCODER35 = Encoder(['Settings Header', 'UINT16', 0x1003],
                 ['Message ID', 'UINT16', 3],
                 ['Scan Count', 'UINT16', scanAmt],
                 ['Reserved', 'UINT16', 3],
-                ['Scan Interval Time', 'UINT32', 0]
+                ['Scan Interval Time', 'UINT32', scanInterval]
                 )
 
 DECODER36 = Decoder(['Settings Header', 'UINT16'],
