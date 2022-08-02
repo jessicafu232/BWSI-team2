@@ -113,6 +113,9 @@ def main():
 
     time_loop = 0
 
+    timetime = 0 
+    indextime = 0
+
     start_time_loop = time.time()
 
     '''
@@ -137,8 +140,13 @@ def main():
         tdct += time.time() - dcst # total distance calculation time
 
         if args.mode == 'true':
+            ttst = time.time()
             times = 2 * distance_to_scan / c 
-            indexes = np.rint(times / 61.024e-12)
+            timetime += time.time() - ttst
+
+            itst = time.time()
+            indexes = np.floor(times / (61.024e-12))
+            indextime += time.time() - itst
         else:
             start_time_no_emulator = 2 * np.min(range_bins) / c
             end_scan = 2 * np.max(range_bins) / c
@@ -186,6 +194,9 @@ def main():
         potentials = potentials ** contrast
     print(potentials)
     potentials = np.abs(potentials)
+
+    print("time calc time", timetime, timetime/(time.time()-start_time) * 100, '%')
+    print("indextime", indextime, indextime/(time.time()-start_time) * 100, '%')
 
 
     print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))

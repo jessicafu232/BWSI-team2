@@ -8,7 +8,7 @@
     "Y_RES": 1000,
     "X_OFFSET": 10,
     "Y_OFFSET": 10,
-    "Scan Amount": 10,
+    "Scan Amount": 1000,
     "Skip": 1,
     "Contrast": 1,
     "Transmit Gain": 63,
