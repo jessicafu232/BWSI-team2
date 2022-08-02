@@ -118,6 +118,9 @@ def main():
 
     start_time_loop = time.time()
 
+    z = platform_pos[0, 2]
+
+
     '''
     @cache
     def wrapper(x):
@@ -128,13 +131,12 @@ def main():
         which_scan = scan
         dcst = time.time() # distance calculation start time
 
-        x = platform_pos[which_scan, 0]
-        y = platform_pos[which_scan, 1]
-        z = platform_pos[which_scan, 2]
+        x = platform_pos[which_scan, 0] + x_offset
+        y = platform_pos[which_scan, 1] + y_offset
         
         distance_to_scan = np.sqrt(
-                            (x - x_pos + x_offset)**2 + \
-                            (y - y_pos + y_offset)**2 + \
+                            (x - x_pos)**2 + \
+                            (y - y_pos)**2 + \
                             (z)**2 
                             )
         tdct += time.time() - dcst # total distance calculation time
