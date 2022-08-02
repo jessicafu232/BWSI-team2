@@ -183,17 +183,31 @@ def main():
         indexes = np.minimum(indexes.astype(int), data_array.shape[1] - 1)
         potentials += data_array[which_scan, indexes]
 
+    finalDict = {
+        'img': potentials,
+        'x': x_pos,
+        'y': y_pos
+    }
+
     time_loop = time.time() - start_time_loop
 
     minimum = np.min(potentials)
     if config.get('Contrast') is None: contrast = 1
 
+    print(potentials)
+
+
     # checking if there are complex numbers, if so then skipping the contrast, if not then running contrast 
     if not np.iscomplexobj(potentials):
         potentials = potentials + abs(minimum)
         potentials = potentials ** contrast
-    print(potentials)
     potentials = np.abs(potentials)
+
+    fileName = "5_point_scatter_img.pkl"
+
+    f = open(fileName, 'wb')
+    pickle.dump(finalDict, f)
+    f.close()
 
     print("time calc time", timetime, timetime/(time.time()-start_time) * 100, '%')
     print("indextime", indextime, indextime/(time.time()-start_time) * 100, '%')
