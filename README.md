@@ -133,7 +133,7 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
 
     * The name format should be as follows:
       * `hide_and_seek_#_config.txt`
- 8. Go into the [Google Drive Folder](https://drive.google.com/drive/folders/1QcMBxsw45c9I8Y6A0zbhN3zqhf3OZ8Xd?usp=sharing) for the submissions and drop in two files:
+ 8. Go into the [Google Drive Folder](https://drive.google.com/drive/folders/1QcMBxsw45c9I8Y6A0zbhN3zqhf3OZ8Xd?usp=sharing) for the submissions and drop in three files:
   * The final `hide_and_seek_#_img.pkl` file
   * The final `hide_and_seek_#_thumbnail.jpg` image
   * The final `hide_and_seek_#_config.txt` file
