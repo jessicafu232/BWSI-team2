@@ -145,7 +145,8 @@ def main():
             timetime += time.time() - ttst
 
             itst = time.time()
-            indexes = np.floor(times / (61.024e-12))
+            indexes = times / (61.024e-12)
+            indexes = indexes.astype(int)
             indextime += time.time() - itst
         else:
             start_time_no_emulator = 2 * np.min(range_bins) / c
