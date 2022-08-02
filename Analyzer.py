@@ -9,9 +9,8 @@ import argparse
 from tqdm import tqdm
 import pandas
 import time
-from functools import cache
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 parser = argparse.ArgumentParser(description="Analyse data")
@@ -156,7 +155,7 @@ def main():
             #print("start scan", start_time_no_emulator * 10**12, "end scan", end_scan * 10**12)
             times = (2 * distance_to_scan / c) - start_time_no_emulator
             diff = (end_scan - start_time_no_emulator) / len(range_bins)
-            indexes = np.rint(times / diff)
+            indexes = times / diff
             
             '''
             # matching the distance_to_scan values with the range_bins value
