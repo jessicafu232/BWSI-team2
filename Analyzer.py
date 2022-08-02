@@ -10,7 +10,7 @@ from tqdm import tqdm
 import pandas
 import time
 
-DEFAULT_CONFIG = './image1_config.json'
+DEFAULT_CONFIG = './five_point_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 parser = argparse.ArgumentParser(description="Analyse data")
@@ -147,7 +147,6 @@ def main():
 
             itst = time.time()
             indexes = times / (61.024e-12)
-            indexes = indexes.astype(int)
             indextime += time.time() - itst
         else:
             start_time_no_emulator = 2 * np.min(range_bins) / c
@@ -182,8 +181,8 @@ def main():
             '''
             
         
-        indexes = np.minimum(indexes, data_array.shape[1] - 1)
-        potentials += data_array[which_scan, indexes.astype(int)]
+        indexes = np.minimum(indexes.astype(int), data_array.shape[1] - 1)
+        potentials += data_array[which_scan, indexes]
 
     time_loop = time.time() - start_time_loop
 
