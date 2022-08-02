@@ -8,6 +8,8 @@ import os
 import argparse
 from tqdm import tqdm
 import pandas
+import time
+from functools import cache
 
 DEFAULT_CONFIG = './five_point_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
@@ -21,6 +23,7 @@ args = parser.parse_args()
 colormap = 'magma'
 non_emulator_file = 'marathon_0.pkl'
 def main():
+
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
     with open(args.config, 'r') as f:
@@ -72,7 +75,6 @@ def main():
     # between each individual scanpoint, we align that time to the scan data time, and then
     # assign that amplitude value to that pixel.     
 
-    import time
     start_time = time.time()
 
     # dimensions of the original image (m)
@@ -106,25 +108,42 @@ def main():
     x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
     y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
 
-    for scan in tqdm(range(scanAmt // config['Skip'])):
-        which_scan = scan * config['Skip']
+
+    print(x_pos.shape)
+
+    time_loop = 0
+
+    start_time_loop = time.time()
+
+    '''
+    @cache
+    def wrapper(x):
+        return np.sqrt(x)
+    '''
+
+    for scan in tqdm(range(scanAmt)):
+        which_scan = scan
         dcst = time.time() # distance calculation start time
+
+        x = platform_pos[which_scan, 0]
+        y = platform_pos[which_scan, 1]
+        z = platform_pos[which_scan, 2]
         
         distance_to_scan = np.sqrt(
-                            (platform_pos[which_scan,0] - x_pos + x_offset)**2 + \
-                            (platform_pos[which_scan,1] - y_pos + y_offset)**2 + \
-                            (platform_pos[which_scan,2])**2 
+                            (x - x_pos + x_offset)**2 + \
+                            (y - y_pos + y_offset)**2 + \
+                            (z)**2 
                             )
         tdct += time.time() - dcst # total distance calculation time
 
         if args.mode == 'true':
-            times = 2 * distance_to_scan / 299792458 
+            times = 2 * distance_to_scan / c 
             indexes = np.rint(times / 61.024e-12)
         else:
-            start_time_no_emulator = 2 * np.min(range_bins) / 299792458
-            end_scan = 2 * np.max(range_bins) / 299792458
+            start_time_no_emulator = 2 * np.min(range_bins) / c
+            end_scan = 2 * np.max(range_bins) / c
             #print("start scan", start_time_no_emulator * 10**12, "end scan", end_scan * 10**12)
-            times = (2 * distance_to_scan / 299792458) - start_time_no_emulator
+            times = (2 * distance_to_scan / c) - start_time_no_emulator
             diff = (end_scan - start_time_no_emulator) / len(range_bins)
             indexes = np.rint(times / diff)
             
@@ -155,6 +174,9 @@ def main():
         
         indexes = np.minimum(indexes, data_array.shape[1] - 1)
         potentials += data_array[which_scan, indexes.astype(int)]
+
+    time_loop = time.time() - start_time_loop
+
     minimum = np.min(potentials)
     if config.get('Contrast') is None: contrast = 1
 
