@@ -103,10 +103,10 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
 3. Check image--zoom out, edit res, etc. if necessary,
 4. Rinse and repeat until the image is properly rendered.
 5. Save the image as a .jpg file, the name in the format of:
-  * `marathon_#_thumbnail.jpg`
+    * `marathon_#_thumbnail.jpg`
 6. Go into the [Google Drive Folder](https://drive.google.com/drive/folders/1QcMBxsw45c9I8Y6A0zbhN3zqhf3OZ8Xd?usp=sharing) for the submissions and drop in two files:
-  * The final `marathon_#_img.pkl` file
-  * The final `marathon_#_thumbnail.jpg` image
+    * The final `marathon_#_img.pkl` file
+    * The final `marathon_#_thumbnail.jpg` image
 7. Either guess the image in the [marathon guesses spreadsheet](https://docs.google.com/spreadsheets/d/1wzOeD-aphi1fu4xmP_s7WK2lvJA0OmqF0BCFpDnjvZc/edit?usp=sharing) or ask the group
 8. move on :))))!
 
@@ -121,8 +121,10 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
  3. Run the emulator.py file, using `-dm offline -od ../../team2/hide_and_seek_#.pkl --op_mode real`
  4. Run the Analyzer.py file with the normal settings
  5. Save the image as a .jpg file, the name in the format of:
-   * `hide_and_seek_#_thumbnail.jpg`
- 6. Copy and paste the config file into a .txt file (maybe use notepad?). The format is as follows:
+    * `hide_and_seek_#_thumbnail.jpg`
+ 6. Copy and paste the config file into a .txt file (maybe use notepad?). The name format should be as follows:
+     * `hide_and_seek_#_config.txt`
+   * The text format should be as follows:
  ```
  SCAN_START - value
  SCAN_END - value
@@ -131,12 +133,10 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
  TRANSMIT_GAIN - value 
 ```
 
-    * The name format should be as follows:
-      * `hide_and_seek_#_config.txt`
  8. Go into the [Google Drive Folder](https://drive.google.com/drive/folders/1QcMBxsw45c9I8Y6A0zbhN3zqhf3OZ8Xd?usp=sharing) for the submissions and drop in three files:
-  * The final `hide_and_seek_#_img.pkl` file
-  * The final `hide_and_seek_#_thumbnail.jpg` image
-  * The final `hide_and_seek_#_config.txt` file
+    * The final `hide_and_seek_#_img.pkl` file
+    * The final `hide_and_seek_#_thumbnail.jpg` image
+    * The final `hide_and_seek_#_config.txt` file
  9. Either guess the image in the [hide and seek guesses spreadsheet](https://docs.google.com/spreadsheets/d/1r0SeTc7nUpxxBbqzcAzwBdZhZkR086tV3fTJLXpMnSk/edit?usp=sharing) or ask the group
  10. move on :))))))))))))!!!!!!!!!!!
 
