@@ -76,7 +76,7 @@ Analyzer Type Config Files are used when directly running the Analyzer.py. Has l
 4. **`Skip`** - Defines the interval of scans that will be skipped over. 
 5. **`Contrast` Value** - Increasing this value increases the contrast by taking all of the amplitudes in the pixel and raising it to the Contrast Value. A Contrast Value of 1 is the default Contrast. 
 
-## Running Analyzer.py
+# Running Analyzer.py
 The analyzer program has a few arguments/parameters for analyzing data.
 
 `--datafile`, `-df`
@@ -88,6 +88,44 @@ The analyzer program has a few arguments/parameters for analyzing data.
 `--mode`, `-em`
 * Whether or not the file is run through the emulator.
   * Default is `true`, can be set to `true` or `false`
+
+# Procedure for running the program!
+Specifically for the final event. Kind of a tutorial just to make sure we don't forget anything :)
+
+## Part 1: Image Marathon
+1. Download datafile (`marathon_#.pkl`), where # is the num of file
+2. Create config
+    * Edit config file at the top of Analyzer.py
+    * Edit the file to analyze at the top of Analyzer.py
+    * Edit the file that the `potentials` array is saved into (AKA the `fileName` variable near the bottom of the code), the name in the format of:
+      * `marathon_#_img.pkl`
+2. Run the file through Analyzer.py. Since it doesn't run through the emulator, run like the following: `python Analyzer.py -em false`
+3. Check image--zoom out, edit res, etc. if necessary,
+4. Rinse and repeat until the image is properly rendered.
+5. Save the image as a .jpg file, the name in the format of:
+  * `marathon_#_thumbnail.jpg`
+6. Go into the [Google Drive Folder](https://drive.google.com/drive/folders/1QcMBxsw45c9I8Y6A0zbhN3zqhf3OZ8Xd?usp=sharing) for the submissions and drop in two files:
+  * The final `marathon_#_img.pkl` file
+  * The final `marathon_#_thumbnail.jpg` image
+7. Move on :)
+
+## Part 2: Hide and Seek
+1. Download datafile (`hide_and_seek_#.pkl`), where # is the num of file
+2. Create config
+    * Edit config file at the top of master.py and Analyzer.py
+    * Edit the file to run through the emulator at the top of master.py
+    * Edit the file to analyze at the top of Analyzer.py
+    * Edit the file that the `potentials` array is saved into (AKA the `fileName` variable near the bottom of the code), the name in the format of:
+      * `hide_and_seek_#_img.pkl`
+ 3. Run the emulator.py file, using `-dm offline -od ../../team2/hide_and_seek_#.pkl --op_mode real`
+ 4. Run the Analyzer.py file with the normal settings
+ 5. Save the image as a .jpg file, the name in the format of:
+   * `hide_and_seek_#_thumbnail.jpg`
+ 6. Go into the [Google Drive Folder](https://drive.google.com/drive/folders/1QcMBxsw45c9I8Y6A0zbhN3zqhf3OZ8Xd?usp=sharing) for the submissions and drop in two files:
+  * The final `hide_and_seek_#_img.pkl` file
+  * The final `hide_and_seek_#_thumbnail.jpg` image
+7. Move on :) 
+
 
 ***
 
