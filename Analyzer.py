@@ -107,8 +107,7 @@ def main():
     x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
     y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
 
-
-    print(x_pos.shape)
+    print(x_pos.dtype)
 
     time_loop = 0
 
