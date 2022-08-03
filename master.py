@@ -6,6 +6,7 @@ import sys
 import itertools
 from tqdm import tqdm
 import time
+
 #Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
 #Config file matches that of Analyzer.py
 
@@ -164,18 +165,19 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
 
 def main():
     # Creates a list of Encoders to send messages and Decoders to receive and interpret messages. Creates excess amount of DECORDER21, or Scan Info Decoders
-    ENCODER_LIST = [ENCODER315, DECODER316, ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
+    CODER_LIST = [ENCODER315, DECODER316, ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
     num_of_msg = int((scan_end - scan_start) // (61.024 * 350)) + 1
     print("radar") # Checks if master.py is running
     for r in range(scanAmt * num_of_msg):
-        ENCODER_LIST.append(DECODER21)
+        CODER_LIST.append(DECODER21)
 
 
 # First scan is at message id 4
     count = 0 # A helper Variable to set up everything
     firstID = 4 #The ID of the first scan info message received. Changes based on the number of Decoders are present in Encoder list. (#D + 1)
 
-    for e in tqdm(ENCODER_LIST):
+# Interating through each encoder/decoder in the CODER_LIST. tqdm is the loading bar.
+    for e in tqdm(CODER_LIST):
         if isinstance(e, Encoder):
             e.send_message()
         else:
@@ -184,19 +186,13 @@ def main():
                 print('rebooting :(')
                 ENCODER317.send_message()
                 DECODER318.receive_message()
-                time.sleep(2)
+                time.sleep(2) # rebooting needs to wait for two seconds in order to work
                 return main()
-                '''
-                index = ENCODER_LIST.index(e)
-                encoder = ENCODER_LIST[index-1]
-                encoder.send_message()
-                message2 = e.receive_message(4096)
-                if message2 is None:
-                    print('Same message dropped twice')
-                    continue'''
             elif message is None: #When no more messages are received, break
                 break
-            if e is DECODER316:
+
+            # Checks if there is a BIT error in the MRM
+            if e is DECODER316: 
                 if message['Power-On BIT Test Result'] != 0:
                     #reboot the system if BIT error
                     print('BIT ERROR: REBOOTING SYSTEM...')
@@ -207,7 +203,8 @@ def main():
                     message2 = DECODER316.receive_message(4096)
                     if message2['Power-On BIT Test Result'] != 0:
                         raise ValueError('ERROR: TWO BIT ERRORS IN A ROW')
-                    
+
+            # Takes only the scan data and sends it into an array in the order it was recieved                    
             if e is DECODER21:
                 if count == 0: #Initialize 2D Array and set firstTime
                     finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
@@ -228,75 +225,3 @@ def main():
     return np.save("array_as_numpy.npy", np.array(finalArray, dtype = float), allow_pickle = True)
 
 main()
-
-    # Excess old code, ignore. 
-'''
- if count == 0: #Initialize 2D Array and set firstTime
-                finalArray = [[0]*message['Number of samples total'] for n in range(scanAmt)]
-                firstTime = message['Timestamp']
-                offset = message['Message index'] * 350
-                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count += 1
-            if message['Timestamp'] == firstTime: #filling first row since we do not know second timestamp
-                offset = message['Message index'] * 350
-                finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-            if firstTime != message['Timestamp'] and count == 1: #Set second time when receiving the next timestamp
-                secondTime = message['Timestamp']
-                timeDelay = secondTime - firstTime
-                print(timeDelay)
-                offset = message['Message index'] * 350
-                finalArray[round((message['Timestamp'] - firstTime) / timeDelay)][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
-                count += 1
-                print((message['Timestamp'] - firstTime) / timeDelay)
-            else: # all other cases past first array and first scan of second array
-                offset = message['Message index'] * 350
-                print((message['Timestamp'] - firstTime) / timeDelay)
-                print(round((message['Timestamp'] - firstTime) / timeDelay))
-'''
-'''
-all_msgs.append(message)
-
-all_msgs.sort(key=lambda x: x["Message ID"])
-all_ids = [x["Message ID"] for x in all_msgs]
-
-
-total_expected_packets = all_msgs[0]["Number of messages total"]
-
-print(total_expected_packets)
-print('excess', (max(all_ids) % total_expected_packets))
-missing_ids = set(range(max(all_ids))) - set(all_ids)
-missing_ids = missing_ids - set(range(36))
-# max(all_ids) does not care about dropped packet at the end
-print('Missing ids', missing_ids)
-former_timestamp = 0
-current_timestamp = 0
-data = []
-counter = 3
-current_scan = []
-from functools import reduce
-for i, msg in enumerate(all_msgs):
-    
-    
-    if counter in missing_ids:
-        if counter % total_expected_packets == 0:
-            current_scan.append([0]*len(all_msgs[total_expected_packets - 1]["Scan Data"]))
-        else:
-        # we want to append a list of 0s the same length as the corresponding data in the first scan (maybe bugged)
-            current_scan.append([0]*350)
-    else:
-        current_scan.append(msg["Scan Data"])
-    
-    # check if we are on a new scan
-    if msg['Message index'] == total_expected_packets - 1:
-            
-        # current_scan = list(itertools.chain.from_iterable(current_scan))
-        # crush the data into one list to represent scan
-
-        current_scan = reduce(lambda x, y: x + y, current_scan)
-        print(len(current_scan))
-        data.append(current_scan)
-        current_scan = []
-    
-    counter += 1
-    former_timestamp = current_timestamp
-'''

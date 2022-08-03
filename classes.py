@@ -5,8 +5,10 @@ import sys
 import itertools
 import socket
 
+# MRM Port
 PORT = 21210
-scanAmt = 50
+
+# Dictionary with byte sizes of every datatype that could be sent
 SIZES = {
     'UINT8': 1,
     'UINT16': 2,
@@ -18,6 +20,7 @@ SIZES = {
     'CHAR[32]' : 32
 }
 
+# Dictionary with possible status / error codes and what they mean
 STATUSES = {1: 'STATUS 1: GENERIC FAILURE',
             2: 'STATUS 2: WRONG OP MODE',
             3: 'STATUS 3: UNSUPPORTED VALUE',
@@ -34,14 +37,16 @@ data_array = []
 TIMEOUT = 5
 serverAddressPort = ('localhost', PORT)
 bufferSize = 4096
+
+# Opening UDP socket at the MRM port and timing out at 5 seconds of no recieved message
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPClientSocket.settimeout(TIMEOUT)
+
 # Takes a Dictionary and converts it into bytearray to be sent to the emulator
 class Encoder:
     def __init__(self, *list):
         self.list = list
-    '''Maybe some internal conversion to bytes? maybe a superclass to handle many messages in the future'''
-    # this might be a stupid idea
+
     def convert_to_bytes(self):
         '''converts the Encoder object into a byte array that we can send to the emulator'''
         bytes = bytearray()
@@ -55,42 +60,45 @@ class Encoder:
                     raise NameError('DATA TOO BIG') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=False)):
                     bytes.append(int(b))
+
             else:
                 if x[2] > (2**(8*size-1)):
                     raise NameError('DATA TOO BIG') 
                 for b in (int.to_bytes(x[2], size, 'big', signed=True)):
                     bytes.append(int(b))
+
         return bytes
 
     def send_message(self):
         '''sends the byte array to the emulator'''
-        #print('Sending: ', self.list)
-
         bytesToSend = self.convert_to_bytes()
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)
 
         return None
-#Recieves a message in the form of a bytearray from the emulator and converts it back to a readerable dictionary
+
+
+#Recieves a message in the form of a bytearray from the emulator and converts it back to a readable dictionary
 class Decoder:
     def __init__(self, *list):
         self.list = list
         self.message_portion = []
 
     def decode(self, msgFromServer) -> dict:
-        '''
-            Tries to decode a bytearray from the server with the paridgm of the data
-        '''
+        '''Tries to decode a bytearray from the server with the paridgm of the data'''
         start = 0
         recievedData = {}
         data = []
 
         for i, sz in enumerate([x[1] for x in self.list]):
-            end = start + SIZES[sz] 
+            end = start + SIZES[sz]
+
+            # parsing through the CHAR[15] bytearray manually, since it converts it to random integers if not 
             if sz == 'CHAR[15]':
                 temp_byte = msgFromServer[start:end]
                 temp_byte = '%' + str(temp_byte)[2:6] + '%' + str(temp_byte)[6:8] + '%' + str(temp_byte)[8:11] \
                 + '%' + str(temp_byte)[11:13] + '%' + str(temp_byte)[13:15] + '%' + str(temp_byte)[15:]\
 
+            # parsing through the CHAR[32] bytearray manually, since it converts it to random integers if not 
             elif sz == 'CHAR[32]':
                 charString = ""
                 for a in msgFromServer[start:end]:
@@ -109,7 +117,6 @@ class Decoder:
                         start = end
                         end = start + 4
                     temp_byte = data
-                    # print(len(data))
                 else:
                     temp_byte = int.from_bytes(msgFromServer[start:end], 'big', signed=True)
 
@@ -120,16 +127,15 @@ class Decoder:
         return recievedData
 
     def receive_message(self, bufferSize=4096):
-        #receives the message
+        '''receives the message'''
         try:
             msgFromServer = UDPClientSocket.recvfrom(bufferSize)
         except socket.timeout:
             return None
 
         msgFromServer = msgFromServer[0]
-        #msg = "Message from Server {}".format(msgFromServer[0])
         message = self.decode(msgFromServer)
-        #print("Message from Server: ", message)
+        
         #checks the status to make sure its 0
         if message.get('Settings Header') != 61953 and message.get('Settings Header') != 0xF101 and message.get('Settings Header') != 0xF102:
             status = message['Status']

@@ -13,14 +13,20 @@ import time
 DEFAULT_CONFIG = './five_point_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
+# name of file to save (change every image)
+fileName = "5_point_scatter_img.pkl"
+
+# adding parser arguments
 parser = argparse.ArgumentParser(description="Analyse data")
 parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of datafile')
 parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
 parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
+parser.add_argument("--fname", '-fn', default=fileName, help='Name of the final dictionary to save' )
 args = parser.parse_args()
 
 colormap = 'magma'
 non_emulator_file = 'marathon_0.pkl'
+
 def main():
 
     list_of_files = glob.glob('../emulator/output/*')
@@ -46,7 +52,6 @@ def main():
         scanAmt = data_array.shape[0] 
         range_bins = x['range_bins']
 
-
     # note: setting arbitrary values to test the next step
 
         # 1b) Opening file, calculations for velocity, range from midpoint of plane,
@@ -65,9 +70,6 @@ def main():
 
     print('range', range_resolution)
     print('cross range', cross_range_resolution)
-
-    #np.save("array_as_numpy.npy", np.array(data_array, dtype=float), allow_pickle=True)
-    # Will find out later what this is
 
     # 2) Using our Pixel Size, finding distance from each pixel to the platform, then using
     # this we calculate the time of the signal to send and come back. Then, knowing the delay 
@@ -118,13 +120,6 @@ def main():
 
     z = platform_pos[0, 2]
 
-
-    '''
-    @cache
-    def wrapper(x):
-        return np.sqrt(x)
-    '''
-
     for scan in tqdm(range(scanAmt)):
         which_scan = scan
         dcst = time.time() # distance calculation start time
@@ -148,54 +143,40 @@ def main():
             indexes = times / (61.024e-12)
             indextime += time.time() - itst
         else:
+            # calculating the start time of the scan data without running through emulator
+            # necessary in order to index using time
             start_time_no_emulator = 2 * np.min(range_bins) / c
-            end_scan = 2 * np.max(range_bins) / c
-            #print("start scan", start_time_no_emulator * 10**12, "end scan", end_scan * 10**12)
-            times = (2 * distance_to_scan / c) - start_time_no_emulator
+            end_time_no_emulator = 2 * np.max(range_bins) / c
+
+            times = (2 * end_time_no_emulator / c) - start_time_no_emulator
             diff = (end_scan - start_time_no_emulator) / len(range_bins)
-            indexes = times / diff
-            
-            '''
-            # matching the distance_to_scan values with the range_bins value
-            index_sorted = np.argsort(range_bins)
-            range_bins_sorted = range_bins[index_sorted]
-            idx1 = np.searchsorted(range_bins_sorted, distance_to_scan)
-            idx2 = np.clip(idx1 - 1, 0, len(range_bins_sorted) - 1)
-
-            diff1 = range_bins_sorted[idx1] - distance_to_scan
-            diff2 = distance_to_scan - range_bins_sorted[idx2]
-
-            # indexes of the closest range_bins value to each pixel.
-            # using this index we can figure out which amplitude is the best for every pixel
-            # b/c its distance is the most similar
-            indexes = index_sorted[np.where(diff1 <= diff2, idx1, idx2)]
-            residual = distance_to_scan - range_bins[indexes]
-            # print(residual)
-            '''
-            '''
-            for i in range(Y_RES):
-                for j in range(X_RES):
-                    ci = np.argmin(np.abs(range_bins - distance_to_scan[i,j]))
-                    potentials[i,j] += data_array[which_scan, ci]
-            '''
-            
+            indexes = times / diff            
         
+        # making sure the indexes aren't out of bounds of the array
         indexes = np.minimum(indexes.astype(int), data_array.shape[1] - 1)
+
+        # inputting the amplitudes into its correct position in the final (potentials) array
         potentials += data_array[which_scan, indexes]
 
+
+    # time of the entire for loop
+    time_loop = time.time() - start_time_loop
+
+    # saving the unprocessed image data into the final dictionary
     finalDict = {
         'img': potentials,
         'x': x_pos,
         'y': y_pos
     }
 
-    time_loop = time.time() - start_time_loop
+    # save file
+    f = open(args.fname, 'wb')
+    pickle.dump(finalDict, f)
+    f.close()
 
+    # setting variables to run contrast processing
     minimum = np.min(potentials)
     if config.get('Contrast') is None: contrast = 1
-
-    print(potentials)
-
 
     # checking if there are complex numbers, if so then skipping the contrast, if not then running contrast 
     if not np.iscomplexobj(potentials):
@@ -203,19 +184,14 @@ def main():
         potentials = potentials ** contrast
     potentials = np.abs(potentials)
 
-    fileName = "5_point_scatter_img.pkl"
-
-    f = open(fileName, 'wb')
-    pickle.dump(finalDict, f)
-    f.close()
-
-    print("time calc time", timetime, timetime/(time.time()-start_time) * 100, '%')
-    print("indextime", indextime, indextime/(time.time()-start_time) * 100, '%')
+    print('Max potential', np.max(potentials), '\nminpotential', np.min(potentials))
+    print("Time spent to calculate the time", timetime, "seconds, or", timetime/(time.time()-start_time) * 100, '%')
+    print("Time spent to index the array", indextime, "seconds, or", indextime/(time.time()-start_time) * 100, '%')
+    print('Time spent calculating distances', tdct, 'seconds, or', tdct/(time.time()-start_time) * 100, '%')
+    print('Total time', time.time()-start_time)
 
 
-    print('max potential', np.max(potentials), '\nminpotential', np.min(potentials))
-    print('total time', time.time()-start_time)
-    print('time spent calculating distances', tdct, 'sec - ', tdct/(time.time()-start_time) * 100, '%')
+    # plotting the image in matplotlib
     plt.xlabel("Crossrange (m)")
     plt.ylabel("Range (m)")
 
