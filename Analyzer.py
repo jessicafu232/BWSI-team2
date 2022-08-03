@@ -11,7 +11,7 @@ import pandas
 import time
 from pyfiglet import Figlet
 
-DEFAULT_CONFIG = './marathon_0_config.json'
+DEFAULT_CONFIG = './five_point_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 # name of file to save (change every image)
@@ -34,27 +34,30 @@ print(f.renderText('OLIVES'))
 def main():
 
     
+    f = Figlet(font='slant')
+    b = Figlet(font='mini')
+
+    print(f.renderText('OLIVES'), b.renderText("by team 2"))
 
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
     with open(args.config, 'r') as f:
         config = json.load(f)
-    print(config)
+    print("YOUR CONFIGURATION:", config)
+    print("\nCURRENTLY:")
     
     if args.mode == 'true':
-        print("Running emulator data!!!")
+        print("Running emulator data!!!\n")
         data_array = np.load(args.datafile)
         with open(latest_file, 'rb') as f:
             positions = pickle.load(f)
         platform_pos = positions['platform_pos']
         scanAmt= config['Scan Amount']
     else:
-        print("Running non-emulator data!!!")
+        print("Running non-emulator data!!!\n")
         x = pandas.read_pickle(non_emulator_file)
-        print(x)
         data_array = x['scan_data']
         platform_pos = x['platform_pos']
-        print(data_array.shape, platform_pos.shape)
         scanAmt = data_array.shape[0] 
         range_bins = x['range_bins']
 
@@ -104,21 +107,20 @@ def main():
     x_offset = config['X_OFFSET']
     y_offset = config['Y_OFFSET']
 
+    # skip amout
+    skip = config['Skip']
+
     # looping through and creating a list with each tick value, for ten total ticks.
     # the tick amount is the same for every image, but the size between ticks differs
     for tick in range(10):
         ticks_x.append(round(tick * (X / 10) - x_offset, 1))
         ticks_y.append(round(tick * (Y / 10) - y_offset, 1))
-
-    tdct = 0
     
     x_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES) * X / X_RES
     y_pos = np.mod(np.arange(X_RES*Y_RES).reshape(X_RES, Y_RES), X_RES).T * Y / Y_RES
 
-    print(x_pos.dtype)
-
+    tdct = 0
     time_loop = 0
-
     timetime = 0 
     indextime = 0
 
@@ -126,8 +128,10 @@ def main():
 
     z = platform_pos[0, 2]
 
-    for scan in tqdm(range(scanAmt)):
-        which_scan = scan
+    print("\nRendering image...")
+
+    for scan in tqdm(range(scanAmt // skip)):
+        which_scan = scan * skip
         dcst = time.time() # distance calculation start time
 
         x = platform_pos[which_scan, 0] + x_offset
@@ -153,7 +157,6 @@ def main():
             # necessary in order to index using time
             start_time_no_emulator = 2 * np.min(range_bins) / c
             end_time_no_emulator = 2 * np.max(range_bins) / c
-
             times = (2 * distance_to_scan / c) - start_time_no_emulator
             diff = (end_time_no_emulator - start_time_no_emulator) / len(range_bins)
             indexes = times / diff            
