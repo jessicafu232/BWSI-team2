@@ -28,10 +28,12 @@ args = parser.parse_args()
 colormap = 'magma'
 non_emulator_file = 'marathon_0.pkl'
 
+f = Figlet(font='slant')
+print(f.renderText('OLIVES'))
+
 def main():
 
-    f = Figlet(font='slant')
-    print(f.renderText('OLIVES'))
+    
 
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
@@ -195,6 +197,9 @@ def main():
     print('Total time', time.time()-start_time)
 
 
+    print(f.renderText('We love Ben'))
+    print(f.renderText('Give us 1st place!'))
+
     # plotting the image in matplotlib
     plt.xlabel("Crossrange (m)")
     plt.ylabel("Range (m)")
@@ -208,3 +213,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
