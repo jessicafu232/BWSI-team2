@@ -89,6 +89,9 @@ The analyzer program has a few arguments/parameters for analyzing data.
 * Whether or not the file is run through the emulator.
   * Default is `true`, can be set to `true` or `false`
 
+`--fname`, `-fn`
+* Name of the final dictionary to be saved. Default can be changed in file as well (i.e. `5_point_scatter_img.pkl`)
+
 # Procedure for running the program!
 Specifically for the final event. Kind of a tutorial just to make sure we don't forget anything :)
 
