@@ -11,7 +11,7 @@ import pandas
 import time
 from pyfiglet import Figlet
 
-DEFAULT_CONFIG = './marathon_0_config.json'
+DEFAULT_CONFIG = './five_point_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 # name of file to save (change every image)
@@ -197,10 +197,7 @@ def main():
     print('Total time', time.time()-start_time)
 
     a = Figlet(font='puffy')
-    print(a.renderText('We love Ben'))
-    print(b.renderText('and Jane'))
-    print(b.renderText('and Shreya'))
-    print(b.renderText('and Adithya'))
+    print(a.renderText('We love Ben'), b.renderText('and Jane'), b.renderText('and Shreya'), b.renderText('and Adithya'))
 
     # plotting the image in matplotlib
     plt.xlabel("Crossrange (m)")
