@@ -197,7 +197,9 @@ def main():
 
     a = Figlet(font='puffy')
     print(a.renderText('We love Ben'))
-    print(b.renderText('and '))
+    print(b.renderText('and Jane'))
+    print(b.renderText('and Shreya'))
+    print(b.renderText('and Adithya'))
 
     # plotting the image in matplotlib
     plt.xlabel("Crossrange (m)")
