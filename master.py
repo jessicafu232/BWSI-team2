@@ -6,6 +6,7 @@ import sys
 import itertools
 from tqdm import tqdm
 import time
+from pyfiglet import Figlet
 
 #Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
 #Config file matches that of Analyzer.py
@@ -164,13 +165,22 @@ DECODER21 = Decoder(['Settings Header', 'UINT16'],
                     )
 
 def main():
+
+    # printing title and everything :)
+    f = Figlet(font='slant')
+    b = Figlet(font='mini')
+
+    print(f.renderText('OLIVES'), b.renderText("by team 2"))
+
     # Creates a list of Encoders to send messages and Decoders to receive and interpret messages. Creates excess amount of DECORDER21, or Scan Info Decoders
     CODER_LIST = [ENCODER315, DECODER316, ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]
     num_of_msg = int((scan_end - scan_start) // (61.024 * 350)) + 1
-    print("radar") # Checks if master.py is running
+    print("Up and running!\n") # Checks if master.py is running
     for r in range(scanAmt * num_of_msg):
         CODER_LIST.append(DECODER21)
 
+    print("Your current configuration is:", DEFAULT_CONFIG)
+    print("\nReceiving messages...")
 
 # First scan is at message id 4
     count = 0 # A helper Variable to set up everything
