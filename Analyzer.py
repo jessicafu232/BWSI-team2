@@ -11,7 +11,7 @@ import pandas
 import time
 from pyfiglet import Figlet
 
-DEFAULT_CONFIG = './image1_config.json'
+DEFAULT_CONFIG = './marathon_0_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 # name of file to save (change every image)
@@ -152,8 +152,8 @@ def main():
             start_time_no_emulator = 2 * np.min(range_bins) / c
             end_time_no_emulator = 2 * np.max(range_bins) / c
 
-            times = (2 * end_time_no_emulator / c) - start_time_no_emulator
-            diff = (end_scan - start_time_no_emulator) / len(range_bins)
+            times = (2 * distance_to_scan / c) - start_time_no_emulator
+            diff = (end_time_no_emulator - start_time_no_emulator) / len(range_bins)
             indexes = times / diff            
         
         # making sure the indexes aren't out of bounds of the array
