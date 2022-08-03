@@ -9,12 +9,13 @@ import argparse
 from tqdm import tqdm
 import pandas
 import time
+from pyfiglet import Figlet
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 # name of file to save (change every image)
-fileName = "5_point_scatter_img.pkl"
+fileName = "image1_img.pkl"
 
 # adding parser arguments
 parser = argparse.ArgumentParser(description="Analyse data")
@@ -28,6 +29,9 @@ colormap = 'magma'
 non_emulator_file = 'marathon_0.pkl'
 
 def main():
+
+    f = Figlet(font='slant')
+    print(f.renderText('OLIVES'))
 
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
