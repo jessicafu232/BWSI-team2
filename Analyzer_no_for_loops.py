@@ -9,7 +9,7 @@ import argparse
 from tqdm import tqdm
 import pandas
 
-DEFAULT_CONFIG = './image4_config.json'
+DEFAULT_CONFIG = './image1_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 parser = argparse.ArgumentParser(description="Analyse data")
@@ -137,6 +137,7 @@ def main():
     if config.get('Contrast') is None: contrast = 1
     potentials = potentials + abs(minimum)
     potentials = potentials ** contrast
+    potentials = np.transpose(potentials)
     print(potentials)
 
 
