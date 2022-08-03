@@ -28,13 +28,14 @@ args = parser.parse_args()
 colormap = 'magma'
 non_emulator_file = 'marathon_0.pkl'
 
+# printing title and everything :)
 f = Figlet(font='slant')
 b = Figlet(font='mini')
 print(f.renderText('OLIVES'), b.renderText("by team 2"))
 
 def main():
 
-
+    # getting latest position file
     list_of_files = glob.glob('../emulator/output/*')
     latest_file = max(list_of_files, key=os.path.getctime)
     with open(args.config, 'r') as f:
