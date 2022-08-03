@@ -221,7 +221,7 @@ def main():
                     offset = message['Message index'] * 350
                     finalArray[0][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
                     count += 1
-                else: # all other cases past first array and first scan of second array
+                else: # all other cases 
                     offset = message['Message index'] * 350
                     finalArray[(message['Message ID'] - 5) // message['Number of messages total']][offset:(offset + message['Number of Samples in message'])] = message['Scan Data']
 
