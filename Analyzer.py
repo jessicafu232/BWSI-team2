@@ -28,6 +28,7 @@ args = parser.parse_args()
 colormap = 'magma'
 non_emulator_file = 'marathon_0.pkl'
 
+# printing title and everything :)
 f = Figlet(font='slant')
 b = Figlet(font='mini')
 print(f.renderText('OLIVES'), b.renderText("by team 2"))
