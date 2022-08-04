@@ -11,11 +11,11 @@ import pandas
 import time
 from pyfiglet import Figlet
 
-DEFAULT_CONFIG = './five_point_config.json'
+DEFAULT_CONFIG = './practice_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 # name of file to save (change every image)
-fileName = "image1_img.pkl"
+fileName = "offline_data_3_img.pkl"
 
 # adding parser arguments
 parser = argparse.ArgumentParser(description="Analyse data")
