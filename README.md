@@ -76,7 +76,7 @@ Analyzer Type Config Files are used when directly running the Analyzer.py. Has l
 4. **`Skip`** - Defines the interval of scans that will be skipped over. 
 5. **`Contrast` Value** - Increasing this value increases the contrast by taking all of the amplitudes in the pixel and raising it to the Contrast Value. A Contrast Value of 1 is the default Contrast. 
 
-# Running Analyzer.py
+# Running Analyzer.py - Arguments
 The analyzer program has a few arguments/parameters for analyzing data.
 
 `--datafile`, `-df`
@@ -84,6 +84,7 @@ The analyzer program has a few arguments/parameters for analyzing data.
 
 `--config`, `-c`
 * Location of a config file (i.e. `../marathon_0_config.json`)
+  * Also can be used when running the master.py
 
 `--mode`, `-em`
 * Whether or not the file is run through the emulator.
@@ -91,6 +92,9 @@ The analyzer program has a few arguments/parameters for analyzing data.
 
 `--fname`, `-fn`
 * Name of the final dictionary to be saved. Default can be changed in file as well (i.e. `5_point_scatter_img.pkl`)
+
+`--cmap`, `-cm`
+* Colormap to be run. Default is magma.
 
 # Procedure for running the program!
 Specifically for the final event. Kind of a tutorial just to make sure we don't forget anything :)
