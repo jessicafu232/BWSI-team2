@@ -154,7 +154,14 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
  3. To calculate X_OFFSET, use the following formula: X_OFFSET = (-1 * X_Coordinate_Of_Image_Center) + (0.5 * X)
  4. To calculate Y_OFFSET, use the following formula: Y_OFFSET = (-1 * Y_Coordinate_Of_Image_Center) + (0.5 * Y)
  5. Tweak these values to find the true center and dimensions of the image. 
+ 
+ ## Getting Rid of Aliasing or Odd Images
+Sometimes, the image can be rendered and look quite odd. It might look like a circle or a partial image. 
+If the image is a circle or has a really weird wavy pattern, that is aliasing. To lower aliasing you lower base integration index and increaase the scan amount. Usually, the BII would be 6, and the scan amount would be anywhere from 1000 to 5000 scans. 
 
+A partial image occurs if your scan range is too small or if you aren't doing enough scans. The scan range can go as high as several million, but be aware that increasing scan range will significantly increase processing time. 
+
+An image with weird horizontal dark lines running through it or an image that shows up very badly might just have the wrong resolution. It really depends on how well the data aligns with the pixels. In order to fix this, just test out a bunch of different resolutions, anywhere between 200 x 200 to 600 x 600. Furthermore, if the image seems faded, try increasing the contrast or the scan amount.
 
 ***
 
