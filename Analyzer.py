@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description="Analyse data")
 parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of datafile')
 parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
 parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
-parser.add_argument("--fname", '-fn', default=fileName, help='Name of the final dictionary to save' )
+parser.add_argument("--filename", '-fn', default=fileName, help='Name of the final dictionary to save' )
 parser.add_argument("-cmap", '-cm', default='magma', help='Colormap to run!')
 args = parser.parse_args()
 
