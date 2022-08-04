@@ -7,17 +7,24 @@ import itertools
 from tqdm import tqdm
 import time
 from pyfiglet import Figlet
+import argparse
 
 #Config File needs to be specified in order to tell Scan Amt, Base Integration Index, etc. Make sure this 
 #Config file matches that of Analyzer.py
 
 DEFAULT_CONFIG = './five_point_config.json'
+
+parser = argparse.ArgumentParser(description="Collect and store data")
+parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
+args = parser.parse_args()
+
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
-    file = DEFAULT_CONFIG
+    file = args.config
 with open(file, 'r') as f:
     config = json.load(f)
+
 
 scan_start = config['Scan start']
 scan_end = config['Scan end']
