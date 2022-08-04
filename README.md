@@ -146,6 +146,14 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
     * The final `hide_and_seek_#_config.txt` file
  9. Either guess the image in the [hide and seek guesses spreadsheet](https://docs.google.com/spreadsheets/d/1r0SeTc7nUpxxBbqzcAzwBdZhZkR086tV3fTJLXpMnSk/edit?usp=sharing) or ask the group
  10. move on :))))))))))))!!!!!!!!!!!
+ 
+ ## Centering Image/Image Focusing Algorithm
+ We do not have an algorithm implemented that automatically centers our image, so you must manually do it. In general, X_OFFSET and Y_OFFSET move the scope to the left and down, respectively, so use this knowledge wisely. The following steps to manually center an image are as follows:
+ 1. Zoom out and center the image at 0. To do this, set X and Y to either (100, 100) or (200, 200) and set X_OFFSET and Y_OFFSET to half of X and Y respectively.
+ 2. Find the approximate dimensions (X by Y) of the ACTUAL IMAGE and the approximate center OF THE IMAGE. Set the X and Y values to these approximate dimensions. Keep the coordinates of the center for the next step. 
+ 3. To calculate X_OFFSET, use the following formula: X_OFFSET = (-1 * X_Coordinate_Of_Image_Center) + (0.5 * X)
+ 4. To calculate Y_OFFSET, use the following formula: Y_OFFSET = (-1 * Y_Coordinate_Of_Image_Center) + (0.5 * Y)
+ 5. Tweak these values to find the true center and dimensions of the image. 
 
 
 ***
