@@ -23,15 +23,16 @@ parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of 
 parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
 parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
 parser.add_argument("--fname", '-fn', default=fileName, help='Name of the final dictionary to save' )
+parser.add_argument("-cmap", '-cm', default='magma', help='Colormap to run!')
 args = parser.parse_args()
 
-colormap = 'magma'
+colormap = args.cmap
 non_emulator_file = 'marathon_0.pkl'
 
 # printing title and everything :)
 f = Figlet(font='slant')
 b = Figlet(font='mini')
-print(f.renderText('OLIVES'), b.renderText("by team 2"))
+print(f.renderText('OLIVES'), b.renderText("by team two"))
 
 def main():
 

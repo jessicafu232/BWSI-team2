@@ -177,7 +177,7 @@ def main():
     f = Figlet(font='slant')
     b = Figlet(font='mini')
 
-    print(f.renderText('OLIVES'), b.renderText("by team 2"))
+    print(f.renderText('OLIVES'), b.renderText("by team two"))
 
     # Creates a list of Encoders to send messages and Decoders to receive and interpret messages. Creates excess amount of DECORDER21, or Scan Info Decoders
     CODER_LIST = [ENCODER315, DECODER316, ENCODER, DECODER, ENCODER31, DECODER32, ENCODER33, DECODER34, ENCODER35, DECODER36]

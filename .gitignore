@@ -15,3 +15,6 @@ __pycache__/classes.cpython-310.pyc
 npextdir/**
 *.pkl
 *.pyc
+generic_config.json
+default_config.json
+GitHub - Shortcut.lnk
