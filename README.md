@@ -148,7 +148,7 @@ Specifically for the final event. Kind of a tutorial just to make sure we don't 
  10. move on :))))))))))))!!!!!!!!!!!
  
  ## Centering Image/Image Focusing Algorithm
- We do not have an algorithm implemented that automatically centers our image, so you must manually do it. In general, X_OFFSET and Y_OFFSET move the scope to the left and down, respectively, so use this knowledge wisely. The following steps to manually center an image are as follows:
+ We do not have an algorithm implemented that automatically centers our image, so you must manually do it. In general, X_OFFSET and Y_OFFSET move the scope to the left and down, respectively, so use this knowledge wisely. The values listed in the steps below can be modified in the Configuration Files. The following steps to manually center an image are as follows:
  1. Zoom out and center the image at 0. To do this, set X and Y to either (100, 100) or (200, 200) and set X_OFFSET and Y_OFFSET to half of X and Y respectively.
  2. Find the approximate dimensions (X by Y) of the ACTUAL IMAGE and the approximate center OF THE IMAGE. Set the X and Y values to these approximate dimensions. Keep the coordinates of the center for the next step. 
  3. To calculate X_OFFSET, use the following formula: X_OFFSET = (-1 * X_Coordinate_Of_Image_Center) + (0.5 * X)
