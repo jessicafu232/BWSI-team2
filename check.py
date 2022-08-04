@@ -1,4 +1,5 @@
 import pandas
+from Analyzer import fileName
 
-x = pandas.read_pickle('5_point_scatter_img.pkl')
+x = pandas.read_pickle(fileName)
 print(x)
