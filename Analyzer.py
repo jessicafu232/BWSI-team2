@@ -15,14 +15,14 @@ DEFAULT_CONFIG = './practice_config.json'
 DEFAULT_DATA = 'array_as_numpy.npy'
 
 # name of file to save (change every image)
-fileName = "offline_data_3_img.pkl"
+DEFAULT_FN = "offline_data_3_img.pkl"
 
 # adding parser arguments
 parser = argparse.ArgumentParser(description="Analyse data")
 parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of datafile')
 parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
 parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
-parser.add_argument("--filename", '-fn', default=fileName, help='Name of the final dictionary to save' )
+parser.add_argument("--filename", '-fn', default=DEFAULT_FN, help='Name of the final dictionary to save' )
 parser.add_argument("-cmap", '-cm', default='magma', help='Colormap to run!')
 args = parser.parse_args()
 
