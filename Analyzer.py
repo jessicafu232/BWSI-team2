@@ -23,11 +23,11 @@ parser.add_argument("--datafile", '-df', default=DEFAULT_DATA,help='Location of 
 parser.add_argument("--config", '-c', default=DEFAULT_CONFIG, help='Location of a configuration file')
 parser.add_argument("--mode", '-em', default='true', help='Run a file through emulator, true or false')
 parser.add_argument("--filename", '-fn', default=fileName, help='Name of the final dictionary to save' )
-parser.add_argument("-cmap", '-cm', default='magma', help='Colormap to run!')
+parser.add_argument("-cmap", '-cm', default='gist_gray', help='Colormap to run!')
 args = parser.parse_args()
 
 colormap = args.cmap
-non_emulator_file = 'marathon_0.pkl'
+#non_emulator_file = 'marathon_0.pkl'
 
 # printing title and everything :)
 f = Figlet(font='slant')
@@ -53,7 +53,7 @@ def main():
         scanAmt= config['Scan Amount']
     else:
         print("Running non-emulator data!!!\n")
-        x = pandas.read_pickle(non_emulator_file)
+        x = pandas.read_pickle(args.datafile)
         data_array = x['scan_data']
         platform_pos = x['platform_pos']
         scanAmt = data_array.shape[0] 
@@ -177,7 +177,7 @@ def main():
     }
 
     # save file
-    f = open(args.fname, 'wb')
+    f = open(args.filename, 'wb')
     pickle.dump(finalDict, f)
     f.close()
 
