@@ -186,7 +186,7 @@ def main():
     for r in range(scanAmt * num_of_msg):
         CODER_LIST.append(DECODER21)
 
-    print("Your current configuration is:", DEFAULT_CONFIG)
+    print("Your current configuration is:", args.config)
     print("\nReceiving messages...")
 
 # First scan is at message id 4
