@@ -64,9 +64,9 @@ def main():
         # 1b) Opening file, calculations for velocity, range from midpoint of plane,
         # range rez, crange rez 
 
-    contrast = config['Contrast']
+    contrast = config['Contrast'] 
     c = 299792458 #m/s
-
+    print(platform_pos[0], platform_pos[-1])
     delta_pos = abs(platform_pos[0,0] - platform_pos[scanAmt - 1, 0])
     wavelength = c / (4.3 * 10**9)
     range_from_plane = math.sqrt((platform_pos[0,0])**2 + (platform_pos[0,1])**2 + \
@@ -89,6 +89,7 @@ def main():
     X = config['X']
     Y = config['Y']
     X_RES, Y_RES = config['X_RES'], config['Y_RES']
+    print(data_array.dtype)
     potentials = np.zeros((X_RES, Y_RES)).astype(data_array.dtype)
 
     # finding dimensions of a single pixel
