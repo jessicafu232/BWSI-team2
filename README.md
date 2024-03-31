@@ -53,7 +53,7 @@ There are also a few other parameters that can affect image rendering, such as `
 
 Here is an example of an image that might be plotted by the Analyzer.py file:
 
-![Image]([https://drive.google.com/file/d/1QugJ6h3Pw8GNcyDUR3PnaCmDPRH2MQS0/view](https://ibb.co/H2KWxSX))
+![Image](https://i.ibb.co/6Zy31MN/marathon-15-thumbnail.jpg)
 
 Here are all the images Team 2 has generated:
 [Image Folder](https://drive.google.com/drive/folders/1MFG5UaaoMLEwFlsTefoemT-OyKQp0SNz?usp=sharing)
