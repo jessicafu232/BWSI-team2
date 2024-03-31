@@ -53,7 +53,7 @@ There are also a few other parameters that can affect image rendering, such as `
 
 Here is an example of an image that might be plotted by the Analyzer.py file:
 
-![Image](https://cdn.discordapp.com/attachments/772273782001238030/1002627447054929992/unknown.png)
+![Image](https://drive.google.com/file/d/1QugJ6h3Pw8GNcyDUR3PnaCmDPRH2MQS0/view)
 
 Here are all the images Team 2 has generated:
 [Image Folder](https://drive.google.com/drive/folders/1MFG5UaaoMLEwFlsTefoemT-OyKQp0SNz?usp=sharing)
